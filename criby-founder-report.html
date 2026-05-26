@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criby — Strategic Market Intelligence Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --primary: #0F766E;
+  --primary-light: #14B8A6;
+  --primary-dark: #0D5C56;
+  --accent: #0369A1;
+  --accent-light: #38BDF8;
+  --bg: #F7FAFA;
+  --bg-card: #FFFFFF;
+  --bg-hero: #0F2B29;
+  --bg-hero-2: #0A1F1E;
+  --fg: #134E4A;
+  --fg-light: #64748B;
+  --fg-muted: #94A3B8;
+  --border: #E2E8F0;
+  --border-teal: #99F6E4;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow-sm: 0 1px 3px rgba(15,118,110,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 24px rgba(15,118,110,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 48px rgba(15,118,110,0.12), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-hover: 0 16px 56px rgba(15,118,110,0.16), 0 6px 20px rgba(0,0,0,0.08);
+  --transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.625;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── Top Nav ── */
+.topnav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: var(--transition);
+}
+.topnav.scrolled { box-shadow: var(--shadow-sm); }
+.topnav-left {
+  display: flex; align-items: center; gap: 12px;
+}
+.topnav-home {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  border: 1px solid var(--border);
+  background: white;
+  cursor: pointer; transition: var(--transition);
+  color: var(--primary);
+}
+.topnav-home:hover {
+  background: var(--primary); color: white;
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(15,118,110,0.25);
+}
+.topnav-home svg { width: 18px; height: 18px; }
+.topnav-brand {
+  font-weight: 700; font-size: 15px; color: var(--primary);
+  display: flex; align-items: center; gap: 6px;
+  letter-spacing: -0.3px;
+  cursor: pointer; text-decoration: none;
+  padding: 4px 8px; border-radius: 8px;
+  transition: var(--transition);
+}
+.topnav-brand:hover { background: rgba(15,118,110,0.06); }
+.topnav-current {
+  display: none; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--fg-light); font-weight: 500;
+}
+.topnav-current .sep { color: var(--border); }
+.topnav-current .name { color: var(--fg); font-weight: 600; }
+body.detail-view .topnav-current { display: flex; }
+.topnav-right {
+  display: flex; align-items: center; gap: 8px;
+}
+.topnav-section-label {
+  display: none;
+  font-size: 12px; font-weight: 600; color: var(--primary);
+  background: rgba(15,118,110,0.08);
+  padding: 4px 12px; border-radius: 100px;
+}
+body.detail-view .topnav-section-label { display: block; }
+
+/* ── Progress Bar ── */
+.progress-bar {
+  position: fixed; top: 56px; left: 0; right: 0; z-index: 99;
+  height: 3px; background: var(--border);
+}
+.progress-bar-fill {
+  height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  width: 0%; transition: width 0.4s ease;
+  border-radius: 0 3px 3px 0;
+}
+
+/* ── Floating Bottom Nav ── */
+.bottom-nav {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 100;
+  background: rgba(15, 43, 41, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 100px;
+  padding: 6px;
+  display: none;
+  align-items: center; gap: 4px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.08);
+}
+body.detail-view .bottom-nav { display: flex; }
+.bottom-nav-item {
+  padding: 8px 14px;
+  border-radius: 100px;
+  font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer; border: none; background: none;
+  transition: var(--transition);
+  white-space: nowrap;
+  letter-spacing: -0.2px;
+}
+.bottom-nav-item:hover {
+  color: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.08);
+}
+.bottom-nav-item.active {
+  color: white;
+  background: var(--primary);
+}
+.bottom-nav-home {
+  padding: 8px 12px;
+  border-radius: 100px;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer; border: none; background: none;
+  transition: var(--transition);
+  display: flex; align-items: center;
+}
+.bottom-nav-home:hover { color: white; background: rgba(255,255,255,0.1); }
+.bottom-nav-home svg { width: 16px; height: 16px; }
+.bottom-nav-divider {
+  width: 1px; height: 20px;
+  background: rgba(255,255,255,0.15);
+  margin: 0 2px;
+}
+
+/* ── Views ── */
+.view { display: none; padding-top: 59px; }
+.view.active { display: block; }
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, var(--bg-hero) 0%, var(--bg-hero-2) 50%, #0C2420 100%);
+  color: white;
+  padding: 80px 32px 72px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -50%; right: -20%; width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(20,184,166,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute; bottom: -30%; left: -10%; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(3,105,161,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner {
+  max-width: 900px; margin: 0 auto; position: relative; z-index: 1;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(20,184,166,0.15);
+  border: 1px solid rgba(20,184,166,0.25);
+  padding: 6px 14px; border-radius: 100px;
+  font-size: 12px; font-weight: 600; color: var(--primary-light);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 24px;
+}
+.hero h1 {
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 700; line-height: 1.1;
+  letter-spacing: -1.5px;
+  margin-bottom: 16px;
+}
+.hero h1 span {
+  background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 18px; color: rgba(255,255,255,0.65); max-width: 640px;
+  line-height: 1.6; margin-bottom: 40px;
+}
+
+/* ── Stat Bar ── */
+.stat-bar {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.stat-item {
+  padding: 24px 20px; text-align: center;
+  background: rgba(255,255,255,0.04);
+  transition: var(--transition);
+}
+.stat-item:hover { background: rgba(255,255,255,0.07); }
+.stat-number {
+  font-size: 32px; font-weight: 700; color: white;
+  letter-spacing: -1px; line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-number .unit { font-size: 18px; font-weight: 500; opacity: 0.7; }
+.stat-label {
+  font-size: 12px; color: rgba(255,255,255,0.5);
+  text-transform: uppercase; letter-spacing: 0.8px; font-weight: 500;
+}
+
+/* ── Section: Cards Grid ── */
+.section { padding: 56px 32px; max-width: 1080px; margin: 0 auto; }
+.section-label {
+  font-size: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1.2px; color: var(--primary);
+  margin-bottom: 8px;
+}
+.section-title {
+  font-size: 28px; font-weight: 700; letter-spacing: -0.8px;
+  color: var(--fg); margin-bottom: 8px;
+}
+.section-desc {
+  font-size: 15px; color: var(--fg-light); max-width: 560px;
+  margin-bottom: 36px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--card-accent, var(--primary)), var(--card-accent-end, var(--primary-light)));
+  opacity: 0; transition: var(--transition);
+}
+.card:hover {
+  border-color: var(--border-teal);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-4px);
+}
+.card:hover::before { opacity: 1; }
+.card-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, rgba(15,118,110,0.08), rgba(20,184,166,0.06));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+  color: var(--primary);
+}
+.card-icon svg { width: 22px; height: 22px; }
+.card-title {
+  font-size: 17px; font-weight: 700; color: var(--fg);
+  margin-bottom: 8px; letter-spacing: -0.3px;
+}
+.card-desc {
+  font-size: 14px; color: var(--fg-light); line-height: 1.6;
+  margin-bottom: 16px;
+}
+.card-metric {
+  display: flex; align-items: baseline; gap: 8px;
+  padding-top: 16px; border-top: 1px solid var(--border);
+}
+.card-metric-value {
+  font-size: 24px; font-weight: 700; color: var(--primary);
+  letter-spacing: -0.5px;
+}
+.card-metric-label {
+  font-size: 12px; color: var(--fg-muted); font-weight: 500;
+}
+.card-arrow {
+  position: absolute; top: 24px; right: 20px;
+  color: var(--fg-muted); opacity: 0;
+  transition: var(--transition);
+}
+.card:hover .card-arrow { opacity: 1; transform: translateX(2px); }
+
+/* ── Key Takeaways Strip ── */
+.takeaways {
+  padding: 48px 32px;
+  background: white;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.takeaways-inner {
+  max-width: 1080px; margin: 0 auto;
+}
+.takeaway-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+  margin-top: 32px;
+}
+.takeaway-item {
+  display: flex; gap: 14px;
+}
+.takeaway-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  margin-top: 6px; flex-shrink: 0;
+}
+.takeaway-dot.green { background: var(--success); }
+.takeaway-dot.yellow { background: var(--warning); }
+.takeaway-dot.blue { background: var(--accent); }
+.takeaway-text { font-size: 14px; color: var(--fg); font-weight: 500; }
+.takeaway-sub { font-size: 13px; color: var(--fg-light); margin-top: 4px; font-weight: 400; }
+
+/* ── Detail View ── */
+.detail-header {
+  background: linear-gradient(135deg, var(--bg-hero) 0%, var(--bg-hero-2) 100%);
+  color: white;
+  padding: 64px 32px 48px;
+}
+.detail-header-inner { max-width: 800px; margin: 0 auto; }
+.detail-section-num {
+  font-size: 13px; font-weight: 600; color: var(--primary-light);
+  text-transform: uppercase; letter-spacing: 1.5px;
+  margin-bottom: 12px;
+}
+.detail-title {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700; letter-spacing: -1px; line-height: 1.15;
+  margin-bottom: 12px;
+}
+.detail-subtitle {
+  font-size: 16px; color: rgba(255,255,255,0.6); max-width: 600px;
+}
+
+.detail-body {
+  max-width: 800px; margin: 0 auto;
+  padding: 48px 32px 120px;
+}
+.detail-body h2 {
+  font-size: 22px; font-weight: 700; color: var(--fg);
+  letter-spacing: -0.5px; margin: 40px 0 16px;
+  padding-top: 32px; border-top: 1px solid var(--border);
+}
+.detail-body h2:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+.detail-body p {
+  font-size: 15px; color: var(--fg); line-height: 1.7;
+  margin-bottom: 16px;
+}
+.detail-body strong { color: var(--fg); font-weight: 600; }
+
+/* Data Table */
+.data-table-wrap {
+  overflow-x: auto; margin: 24px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.data-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 14px;
+}
+.data-table thead { background: #F1F5F9; }
+.data-table th {
+  padding: 12px 16px; text-align: left;
+  font-weight: 600; color: var(--fg);
+  font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(15,118,110,0.02); }
+.data-table .highlight { color: var(--primary); font-weight: 600; }
+
+/* Insight Box */
+.insight-box {
+  background: linear-gradient(135deg, rgba(15,118,110,0.04), rgba(20,184,166,0.03));
+  border: 1px solid var(--border-teal);
+  border-radius: var(--radius-sm);
+  padding: 20px 24px;
+  margin: 24px 0;
+}
+.insight-box-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--primary);
+  margin-bottom: 8px;
+}
+.insight-box p {
+  font-size: 14px; margin-bottom: 0; color: var(--fg);
+}
+
+/* Warning Box */
+.warning-box {
+  background: rgba(245,158,11,0.06);
+  border: 1px solid rgba(245,158,11,0.2);
+  border-radius: var(--radius-sm);
+  padding: 20px 24px;
+  margin: 24px 0;
+}
+.warning-box-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--warning);
+  margin-bottom: 8px;
+}
+
+/* Phase Timeline */
+.timeline { margin: 24px 0; }
+.timeline-item {
+  display: flex; gap: 20px; padding-bottom: 28px;
+  position: relative;
+}
+.timeline-item::before {
+  content: ''; position: absolute;
+  left: 17px; top: 36px; bottom: 0;
+  width: 2px; background: var(--border-teal);
+}
+.timeline-item:last-child::before { display: none; }
+.timeline-dot {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 700; font-size: 14px;
+  flex-shrink: 0;
+}
+.timeline-content { flex: 1; }
+.timeline-title {
+  font-size: 16px; font-weight: 700; color: var(--fg);
+  margin-bottom: 4px;
+}
+.timeline-period {
+  font-size: 12px; color: var(--primary); font-weight: 600;
+  margin-bottom: 6px;
+}
+.timeline-desc {
+  font-size: 14px; color: var(--fg-light); line-height: 1.6;
+}
+
+/* List */
+.detail-list {
+  list-style: none; margin: 16px 0;
+}
+.detail-list li {
+  padding: 8px 0 8px 24px;
+  position: relative;
+  font-size: 14px; color: var(--fg);
+}
+.detail-list li::before {
+  content: '';
+  position: absolute; left: 0; top: 16px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--primary-light);
+}
+
+/* Section Nav */
+.section-nav {
+  display: flex; justify-content: space-between;
+  padding-top: 40px; border-top: 1px solid var(--border);
+  margin-top: 48px;
+}
+.section-nav-btn {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 600; color: var(--primary);
+  cursor: pointer; border: none; background: none;
+  padding: 10px 16px; border-radius: 10px;
+  transition: var(--transition);
+}
+.section-nav-btn:hover { background: rgba(15,118,110,0.06); }
+.section-nav-btn.disabled { opacity: 0.3; pointer-events: none; }
+.section-nav-btn svg { width: 16px; height: 16px; }
+
+/* ── Footer ── */
+.footer {
+  padding: 40px 32px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  font-size: 13px; color: var(--fg-muted);
+}
+
+/* ── Animations ── */
+.fade-up {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s var(--transition);
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+.stagger-1 { transition-delay: 0.05s; }
+.stagger-2 { transition-delay: 0.1s; }
+.stagger-3 { transition-delay: 0.15s; }
+.stagger-4 { transition-delay: 0.2s; }
+.stagger-5 { transition-delay: 0.25s; }
+.stagger-6 { transition-delay: 0.3s; }
+.stagger-7 { transition-delay: 0.35s; }
+.stagger-8 { transition-delay: 0.4s; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .hero { padding: 56px 20px 48px; }
+  .stat-bar { grid-template-columns: repeat(2, 1fr); }
+  .stat-number { font-size: 24px; }
+  .section, .detail-body, .detail-header { padding-left: 20px; padding-right: 20px; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .takeaway-grid { grid-template-columns: 1fr; gap: 20px; }
+  .section-nav { flex-direction: column; gap: 12px; }
+  .topnav { padding: 0 12px; }
+  .topnav-brand { font-size: 13px; }
+  .topnav-current .name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+  .bottom-nav {
+    left: 12px; right: 12px; transform: none;
+    border-radius: 16px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .bottom-nav::-webkit-scrollbar { display: none; }
+  .bottom-nav-item { font-size: 11px; padding: 7px 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Top Navigation -->
+<nav class="topnav" id="topnav">
+  <div class="topnav-left">
+    <button class="topnav-home" onclick="showOverview()" title="Back to Overview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </button>
+    <a class="topnav-brand" href="#" onclick="showOverview();return false" style="text-decoration:none;cursor:pointer">Criby Strategic Report</a>
+    <div class="topnav-current">
+      <span class="sep">/</span>
+      <span class="name" id="topnavSectionName"></span>
+    </div>
+  </div>
+  <div class="topnav-right">
+    <span class="topnav-section-label" id="topnavSectionNum"></span>
+  </div>
+</nav>
+
+<div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+
+<!-- Floating Bottom Navigation -->
+<div class="bottom-nav" id="bottomNav">
+  <button class="bottom-nav-home" onclick="showOverview()" title="Home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  </button>
+  <div class="bottom-nav-divider"></div>
+  <button class="bottom-nav-item" data-section="market" onclick="showDetail('market')">Market</button>
+  <button class="bottom-nav-item" data-section="icp" onclick="showDetail('icp')">ICP</button>
+  <button class="bottom-nav-item" data-section="business" onclick="showDetail('business')">Model</button>
+  <button class="bottom-nav-item" data-section="competitive" onclick="showDetail('competitive')">Competition</button>
+  <button class="bottom-nav-item" data-section="gtm" onclick="showDetail('gtm')">GTM</button>
+  <button class="bottom-nav-item" data-section="wedge" onclick="showDetail('wedge')">Strategy</button>
+  <button class="bottom-nav-item" data-section="risks" onclick="showDetail('risks')">Risks</button>
+  <button class="bottom-nav-item" data-section="roadmap" onclick="showDetail('roadmap')">Roadmap</button>
+</div>
+
+<!-- ════════════════════════════ OVERVIEW VIEW ════════════════════════════ -->
+<div class="view active" id="overviewView">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge fade-up">Strategic Intelligence</div>
+      <h1 class="fade-up stagger-1">The Global Housing<br>Market is <span>Wide Open</span></h1>
+      <p class="hero-sub fade-up stagger-2">A data-driven analysis of the cross-border real estate opportunity, your ideal customers, and a strategic playbook to capture the market. Prepared May 2026.</p>
+
+      <div class="stat-bar fade-up stagger-3">
+        <div class="stat-item">
+          <div class="stat-number" data-count="10.5">0<span class="unit">T</span></div>
+          <div class="stat-label">Global RE Market</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="145">0<span class="unit">B</span></div>
+          <div class="stat-label">Platform SAM</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="43">0<span class="unit">M</span></div>
+          <div class="stat-label">Digital Nomads</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="281">0<span class="unit">M</span></div>
+          <div class="stat-label">Intl Migrants</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Takeaways -->
+  <section class="takeaways">
+    <div class="takeaways-inner">
+      <div class="section-label fade-up">At a Glance</div>
+      <div class="section-title fade-up stagger-1">Three Things That Matter Most</div>
+
+      <div class="takeaway-grid">
+        <div class="takeaway-item fade-up stagger-2">
+          <div class="takeaway-dot green"></div>
+          <div>
+            <div class="takeaway-text">The market is massive and genuinely underserved</div>
+            <div class="takeaway-sub">$80-145B in platform-addressable cross-border housing spend. No incumbent owns this. The timing is right.</div>
+          </div>
+        </div>
+        <div class="takeaway-item fade-up stagger-3">
+          <div class="takeaway-dot blue"></div>
+          <div>
+            <div class="takeaway-text">Digital nomads are your strategic wedge</div>
+            <div class="takeaway-sub">43M people, $124K avg income, 3-6 moves per year. They're underserved and ready for a platform that "gets" them.</div>
+          </div>
+        </div>
+        <div class="takeaway-item fade-up stagger-4">
+          <div class="takeaway-dot yellow"></div>
+          <div>
+            <div class="takeaway-text">Depth beats breadth — every time</div>
+            <div class="takeaway-sub">Every successful housing marketplace won by dominating a few cities first. 100+ countries comes later. Medellin density comes now.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Topic Cards -->
+  <section class="section">
+    <div class="section-label fade-up">Deep Dives</div>
+    <div class="section-title fade-up stagger-1">Explore the Full Analysis</div>
+    <div class="section-desc fade-up stagger-2">Click any card to read the detailed research, data tables, and strategic recommendations.</div>
+
+    <div class="cards-grid">
+
+      <div class="card fade-up stagger-3" onclick="showDetail('market')">
+        <div class="card-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+        <div class="card-title">Market Opportunity</div>
+        <div class="card-desc">A $10.5T global market with five structural tailwinds converging right now. The cross-border housing gap is real.</div>
+        <div class="card-metric">
+          <div class="card-metric-value">$80-145B</div>
+          <div class="card-metric-label">platform SAM</div>
+        </div>
+      </div>
+
+      <div class="card fade-up stagger-4" onclick="showDetail('icp')">
+        <div class="card-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div class="card-title">Your Ideal Customer</div>
+        <div class="card-desc">Five demand segments analyzed. Digital nomads are the strategic wedge — highest frequency, income, and platform affinity.</div>
+        <div class="card-metric">
+          <div class="card-metric-value">43M</div>
+          <div class="card-metric-label">digital nomads globally</div>
+        </div>
+      </div>
+
+      <div class="card fade-up stagger-5" onclick="showDetail('business')">
+        <div class="card-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        <div class="card-title">Business Model</div>
+        <div class="card-desc">Hybrid freemium + transaction model with multiple margin multipliers. Fintech services unlock 40%+ margins.</div>
+        <div class="card-metric">
+          <div class="card-metric-value">10-20%</div>
+          <div class="card-metric-label">blended take rate</div>
+        </div>
+      </div>
+
+      <div class="card fade-up stagger-6" onclick="showDetail('competitive')">
+        <div class="card-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
+        <div class="card-title">Competitive Landscape</div>
+        <div class="card-desc">No player owns global cross-border housing. The white space exists — but there's an 18-24 month window before incumbents move.</div>
+        <div class="card-metric">
+          <div class="card-metric-value">18-24</div>
+          <div class="card-metric-label">month competitive window</div>
+        </div>
+      </div>
+
+      <div class="card fade-up stagger-5" onclick="showDetail('gtm')">
+        <div class="card-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="card-title">Go-to-Market Strategy</div>
+        <div class="card-desc">A supply-first, density-driven playbook. Start with Medellin, expand through nomad corridors, scale with programmatic SEO.</div>
+        <div class="card-metric">
+          <div class="card-metric-value">50</div>
+          <div class="card-metric-label">hub cities to target</div>
+        </div>
+      </div>
+
+      <div class="card fade-up stagger-6" onclick="showDetail('wedge')">
+        <div class="card-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="card-title">Strategic Positioning</div>
+        <div class="card-desc">Trust infrastructure — not translation — is the durable moat. Verified landlords, escrow, and local knowledge compound over time.</div>
+        <div class="card-metric">
+          <div class="card-metric-value">$5.1T</div>
+          <div class="card-metric-label">addressable housing spend</div>
+        </div>
+      </div>
+
+      <div class="card fade-up stagger-7" onclick="showDetail('risks')">
+        <div class="card-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <div class="card-icon" style="background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(245,158,11,0.05));">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="card-title">Key Risks & Challenges</div>
+        <div class="card-desc">Liquidity, regulation, and incumbent response are the three biggest challenges. Here's how to navigate each one.</div>
+        <div class="card-metric">
+          <div class="card-metric-value">5</div>
+          <div class="card-metric-label">critical risks mapped</div>
+        </div>
+      </div>
+
+      <div class="card fade-up stagger-8" onclick="showDetail('roadmap')">
+        <div class="card-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <div class="card-icon" style="background: linear-gradient(135deg, rgba(3,105,161,0.1), rgba(56,189,248,0.06));">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <div class="card-title">Recommended Roadmap</div>
+        <div class="card-desc">A three-phase strategy: dominate Medellin, expand LatAm corridors, then go global through nomad hubs.</div>
+        <div class="card-metric">
+          <div class="card-metric-value">3</div>
+          <div class="card-metric-label">execution phases</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    Prepared May 2026 &middot; Data from UN, World Bank, Statista, SimilarWeb, Crunchbase &middot; For strategic planning purposes
+  </footer>
+</div>
+
+<!-- ════════════════════════════ DETAIL VIEWS ════════════════════════════ -->
+
+<!-- MARKET OPPORTUNITY -->
+<div class="view" id="detail-market">
+  <div class="detail-header">
+    <div class="detail-header-inner">
+      <div class="detail-section-num">Section 01</div>
+      <div class="detail-title">Market Opportunity</div>
+      <div class="detail-subtitle">You're going after a $10.5T market with structural tailwinds that didn't exist five years ago.</div>
+    </div>
+  </div>
+  <div class="detail-body">
+    <h2>Total Addressable Market</h2>
+    <p>Global residential real estate is a <strong>$10.5-11.6 trillion market</strong> growing at 5.2% CAGR. Within that, cross-border residential transactions hit <strong>$888.6 billion in 2025</strong>, up 14% year-over-year. The portion that's platform-intermediable — your real SAM — is <strong>$80-145 billion</strong>.</p>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Market Layer</th><th>Size</th><th>Growth</th></tr></thead>
+        <tbody>
+          <tr><td>Global Residential RE</td><td class="highlight">$10.5-11.6T</td><td>5.2% CAGR</td></tr>
+          <tr><td>PropTech Sector</td><td class="highlight">$45-54B</td><td>14-16% CAGR</td></tr>
+          <tr><td>Cross-Border Residential</td><td class="highlight">$888.6B</td><td>14% YoY</td></tr>
+          <tr><td>Platform-Intermediated (SAM)</td><td class="highlight">$80-145B</td><td>18-22% CAGR</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Five Structural Tailwinds</h2>
+    <p>These aren't cyclical trends — they're structural shifts that create a permanent demand layer:</p>
+    <ul class="detail-list">
+      <li><strong>Digital Nomad Visa Proliferation:</strong> 60-66 countries now offer dedicated nomad visas, up from ~10 in 2019. Governments are building the regulatory framework for your users.</li>
+      <li><strong>Remote Work Normalization:</strong> 52% of the global workforce now works remotely at least part-time. This cohort is permanent.</li>
+      <li><strong>AI Translation Maturity:</strong> Real-time translation has reached commercial viability — the language barrier in online content is disappearing.</li>
+      <li><strong>Post-COVID Mobility Recovery:</strong> International mobility has recovered to 95%+ of 2019 levels, with cross-border rental demand exceeding pre-pandemic peaks.</li>
+      <li><strong>PropTech Investment Recovery:</strong> PropTech funding hit $16.7B in 2025 (+68% YoY). Cross-border platforms are getting disproportionate investor attention.</li>
+    </ul>
+
+    <h2>Key Population Drivers</h2>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Population</th><th>Size (2025)</th><th>Growth</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td>International Migrants</td><td class="highlight">281M</td><td>2.4% annually</td><td>UN IOM</td></tr>
+          <tr><td>Digital Nomads</td><td class="highlight">43M</td><td>80M by 2030</td><td>MBO Partners</td></tr>
+          <tr><td>International Students</td><td class="highlight">6.9M</td><td>4.8% CAGR</td><td>UNESCO</td></tr>
+          <tr><td>HNWI Relocating Annually</td><td class="highlight">142K</td><td>12% YoY</td><td>Henley & Partners</td></tr>
+          <tr><td>Remote Workers (Global)</td><td class="highlight">52% of workforce</td><td>Stabilizing</td><td>McKinsey</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-box-label">Key Insight</div>
+      <p>The market opportunity is validated by third-party data from UN, World Bank, and industry analysts. This isn't theoretical — $888.6B in cross-border residential transactions happened last year. The question isn't whether the market exists, it's who will capture the platform layer.</p>
+    </div>
+
+    <div class="section-nav">
+      <button class="section-nav-btn disabled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Previous</button>
+      <button class="section-nav-btn" onclick="showDetail('icp')">Your Ideal Customer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ICP -->
+<div class="view" id="detail-icp">
+  <div class="detail-header">
+    <div class="detail-header-inner">
+      <div class="detail-section-num">Section 02</div>
+      <div class="detail-title">Your Ideal Customer</div>
+      <div class="detail-subtitle">Five demand segments, one clear starting point. Digital nomads are your wedge into a massive market.</div>
+    </div>
+  </div>
+  <div class="detail-body">
+    <h2>Five Demand Segments</h2>
+    <p>Cross-border housing demand comes from five distinct populations. They differ in search frequency, income, and platform affinity — which determines who you should target first.</p>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Segment</th><th>Population</th><th>Avg Income</th><th>Search Frequency</th><th>Platform Affinity</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Digital Nomads</strong></td><td class="highlight">43M</td><td>$124K</td><td>3-6x / year</td><td>Very High</td></tr>
+          <tr><td>Corporate Relocators</td><td>8.2M moves/yr</td><td>$85-150K</td><td>1-2x / year</td><td>High</td></tr>
+          <tr><td>International Students</td><td>6.9M</td><td>$15-35K</td><td>1x / year</td><td>Very High</td></tr>
+          <tr><td>Retirees / Lifestyle</td><td>12M+</td><td>$45-120K</td><td>1x / 2-5 years</td><td>Medium</td></tr>
+          <tr><td>Cross-border Investors</td><td>2.1M</td><td>$500K+</td><td>2-4x / year</td><td>Medium</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Why Digital Nomads First</h2>
+    <p>Digital nomads are the optimal initial target. Here's why:</p>
+    <ul class="detail-list">
+      <li><strong>Highest search frequency</strong> (3-6 moves per year) — more transactions means faster liquidity and faster learning</li>
+      <li><strong>High income</strong> ($124K average) — supports premium pricing and willingness to pay for convenience</li>
+      <li><strong>Platform-native</strong> — already transact digitally for everything, including accommodation</li>
+      <li><strong>Strong network effects</strong> — concentrated in visible online communities; word-of-mouth amplifies naturally</li>
+      <li><strong>Exceptional unit economics</strong> — LTV:CAC ratio of 10-37x based on comparable platform data</li>
+    </ul>
+
+    <div class="insight-box">
+      <div class="insight-box-label">Strategic Recommendation</div>
+      <p>Sequence your market entry: <strong>Nomads first</strong> (Year 1), then <strong>students</strong> (Year 1-2, seasonal predictability), then <strong>retirees</strong> (Year 2, longer leases stabilize supply), then <strong>corporate</strong> (Year 2-3, highest revenue per transaction), then <strong>investors</strong> (Year 3+, requires trust infrastructure).</p>
+    </div>
+
+    <h2>Unit Economics by Segment</h2>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Metric</th><th>Nomads</th><th>Students</th><th>Retirees</th><th>Corporate</th><th>Investors</th></tr></thead>
+        <tbody>
+          <tr><td>Avg Monthly Rent</td><td class="highlight">$1,500</td><td>$800</td><td>$1,200</td><td>$2,500</td><td>N/A</td></tr>
+          <tr><td>Avg Stay</td><td>3 months</td><td>10 months</td><td>24+ months</td><td>12 months</td><td>N/A</td></tr>
+          <tr><td>Annual Housing Spend</td><td class="highlight">$18,000</td><td>$8,000</td><td>$14,400</td><td>$30,000</td><td>$350K</td></tr>
+          <tr><td>Revenue Per User</td><td class="highlight">$2,160</td><td>$800</td><td>$1,440</td><td>$2,400</td><td>$7,000</td></tr>
+          <tr><td>CAC (Est.)</td><td>$60-100</td><td>$30-50</td><td>$80-120</td><td>$200-400</td><td>$500-1K</td></tr>
+          <tr><td>LTV:CAC</td><td class="highlight">10-37x</td><td>8-16x</td><td>12-18x</td><td>6-12x</td><td>7-14x</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>The 50-Hub Strategy</h2>
+    <p>About 50 cities worldwide account for 80%+ of cross-border housing demand. These hubs overlap across multiple customer segments:</p>
+    <p><strong>Tier 1 (10 cities):</strong> Lisbon, Barcelona, Bangkok, Mexico City, Medellin, Dubai, Bali, Berlin, London, Singapore</p>
+    <p><strong>Tier 2 (15 cities):</strong> Buenos Aires, Tbilisi, Prague, Amsterdam, Kuala Lumpur, Chiang Mai, Cape Town, Porto, Istanbul, Ho Chi Minh City, Tulum, Lima, Bogota, Split, Athens</p>
+
+    <div class="section-nav">
+      <button class="section-nav-btn" onclick="showDetail('market')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Market Opportunity</button>
+      <button class="section-nav-btn" onclick="showDetail('business')">Business Model <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- BUSINESS MODEL -->
+<div class="view" id="detail-business">
+  <div class="detail-header">
+    <div class="detail-header-inner">
+      <div class="detail-section-num">Section 03</div>
+      <div class="detail-title">Business Model</div>
+      <div class="detail-subtitle">A hybrid revenue model with clear margin expansion through fintech services.</div>
+    </div>
+  </div>
+  <div class="detail-body">
+    <h2>Revenue Model: Hybrid Freemium + Transaction</h2>
+    <p>The model combines subscription tiers for landlords/agents with transaction fees from tenants — a structure proven by comparable platforms.</p>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Tier</th><th>Monthly Fee</th><th>Commission</th><th>Listings</th><th>Features</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Free</strong></td><td>$0</td><td>10% per booking</td><td>Up to 3</td><td>Basic listing, standard placement</td></tr>
+          <tr><td><strong>Pro</strong></td><td>~$47/mo</td><td>5%</td><td>Up to 25</td><td>Priority placement, analytics, verified badge</td></tr>
+          <tr><td><strong>Enterprise</strong></td><td>~$190/mo</td><td>2-4%</td><td>Unlimited</td><td>Dedicated support, API, white-label</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>How You Compare</h2>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Metric</th><th>Criby</th><th>HousingAnywhere</th><th>Spotahome</th><th>Blueground</th></tr></thead>
+        <tbody>
+          <tr><td>Avg Monthly Rent</td><td>$800-1,200</td><td>$1,100</td><td>$1,400</td><td>$3,200</td></tr>
+          <tr><td>Tenant Take Rate</td><td>5-10%</td><td>15-18%</td><td>12-15%</td><td>30-40%</td></tr>
+          <tr><td>Landlord Take Rate</td><td>5-10%</td><td>8-12%</td><td>8-10%</td><td>N/A</td></tr>
+          <tr><td>Blended Take Rate</td><td class="highlight">10-20%</td><td>23-30%</td><td>20-25%</td><td>30-40%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Margin Multipliers</h2>
+    <p>The path to healthy margins runs through ancillary fintech services. These are high-margin, natural extensions of the core transaction:</p>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Revenue Line</th><th>Margin</th><th>Market Size</th><th>Timing</th></tr></thead>
+        <tbody>
+          <tr><td>Deposit Alternatives</td><td class="highlight">60-70%</td><td>$12B</td><td>Year 2</td></tr>
+          <tr><td>Rent Insurance</td><td class="highlight">50-60%</td><td>$8B</td><td>Year 2</td></tr>
+          <tr><td>FX Services</td><td class="highlight">40-50%</td><td>$2.1T</td><td>Year 1</td></tr>
+          <tr><td>Corporate Relocation</td><td>35-45%</td><td>$21.7B</td><td>Year 2-3</td></tr>
+          <tr><td>Mortgage Referral</td><td>30-40%</td><td>$888B</td><td>Year 3+</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-box-label">Key Insight</div>
+      <p><strong>FX services should launch Day 1.</strong> Every cross-border renter needs to convert currency. Even a 1-2% spread on payment processing creates meaningful revenue from the first transaction — and it's a natural part of the checkout flow.</p>
+    </div>
+
+    <h2>The Corporate Relocation Opportunity</h2>
+    <p>The $21.7B corporate relocation market is the high-LTV play. Average corporate relocation budgets run $75-150K per employee, with housing representing 30-40% of that spend. Current solutions (BGRS, Cartus, Sirva) are legacy, analog, and expensive. A technology-forward platform could capture 5-10% of housing allocation as platform fee.</p>
+
+    <div class="section-nav">
+      <button class="section-nav-btn" onclick="showDetail('icp')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Your Ideal Customer</button>
+      <button class="section-nav-btn" onclick="showDetail('competitive')">Competitive Landscape <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPETITIVE LANDSCAPE -->
+<div class="view" id="detail-competitive">
+  <div class="detail-header">
+    <div class="detail-header-inner">
+      <div class="detail-section-num">Section 04</div>
+      <div class="detail-title">Competitive Landscape</div>
+      <div class="detail-subtitle">No one owns global cross-border housing yet. Here's who's trying and where the white space is.</div>
+    </div>
+  </div>
+  <div class="detail-body">
+    <h2>Direct Competitors</h2>
+    <p>These are the platforms directly competing in cross-border housing. Note the funding levels and time-to-traction — this is a capital-intensive category.</p>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Company</th><th>Founded</th><th>Funding</th><th>Key Metric</th><th>Focus</th></tr></thead>
+        <tbody>
+          <tr><td><strong>HousingAnywhere</strong></td><td>2009</td><td>$50.7M</td><td>30K+ listings</td><td>Europe, pivoted B2B</td></tr>
+          <tr><td><strong>Spotahome</strong></td><td>2014</td><td>$104M</td><td>EBITDA positive</td><td>EU (85% from 8 cities)</td></tr>
+          <tr><td><strong>Blueground</strong></td><td>2013</td><td>$258M</td><td>$560M revenue</td><td>US/EU (35 cities)</td></tr>
+          <tr><td><strong>Flatio</strong></td><td>2016</td><td>$8.5M</td><td>60K+ listings</td><td>EU (CZ origin)</td></tr>
+          <tr><td><strong>Uniplaces</strong></td><td>2013</td><td>$33M</td><td>Students focus</td><td>EU, stagnant</td></tr>
+          <tr><td><strong>Properstar</strong></td><td>2012</td><td>$15M+</td><td>200+ portal network</td><td>Global aggregator</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Regional Fortress Businesses</h2>
+    <p>These incumbents dominate their domestic markets with deep moats. They haven't gone global because their home markets are large and profitable enough. But they could.</p>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Platform</th><th>Market</th><th>Revenue</th><th>Moat</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Zillow</strong></td><td>US</td><td class="highlight">$2.2B</td><td>70% traffic share, data moat</td></tr>
+          <tr><td><strong>Rightmove</strong></td><td>UK</td><td class="highlight">$465M (70% margins)</td><td>86% UK agent share</td></tr>
+          <tr><td><strong>Scout24</strong></td><td>DACH</td><td class="highlight">$640M</td><td>95%+ agent penetration</td></tr>
+          <tr><td><strong>REA Group</strong></td><td>ANZ</td><td class="highlight">$1.3B</td><td>90% Australian coverage</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>The White Space</h2>
+    <p>The genuine white space is: <strong>no platform simultaneously serves global buy + rent in 70+ languages with end-to-end transaction capability.</strong></p>
+    <p>This gap exists not because nobody thought of it — but because the operational complexity is enormous. The companies that have come closest all learned the same lesson: <strong>depth in a few markets beats breadth across many.</strong></p>
+
+    <div class="warning-box">
+      <div class="warning-box-label">Competitive Window</div>
+      <p>Airbnb has discussed expanding into longer-term housing (1-6 month stays). Booking.com launched "Apartments" as a category. <strong>Your window is 18-24 months</strong> before incumbents expand cross-border capabilities. They bring existing supply (7M+ Airbnb listings), existing demand (billions of monthly visits), and billions in capital.</p>
+    </div>
+
+    <h2>Why Incumbents Haven't Filled This Gap (Yet)</h2>
+    <ul class="detail-list">
+      <li><strong>Local platforms</strong> (Zillow, Rightmove) have no incentive to internationalize — domestic markets are large and profitable</li>
+      <li><strong>Travel platforms</strong> (Airbnb, Booking.com) serve short-term stays, not housing</li>
+      <li><strong>Cross-border platforms</strong> (Spotahome, HousingAnywhere) discovered depth > breadth the hard way</li>
+      <li><strong>Aggregators</strong> (Properstar) lack transaction capability and brand recognition</li>
+    </ul>
+
+    <div class="section-nav">
+      <button class="section-nav-btn" onclick="showDetail('business')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Business Model</button>
+      <button class="section-nav-btn" onclick="showDetail('gtm')">Go-to-Market <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- GTM STRATEGY -->
+<div class="view" id="detail-gtm">
+  <div class="detail-header">
+    <div class="detail-header-inner">
+      <div class="detail-section-num">Section 05</div>
+      <div class="detail-title">Go-to-Market Strategy</div>
+      <div class="detail-subtitle">A supply-first, density-driven playbook built on what actually worked for comparable platforms.</div>
+    </div>
+  </div>
+  <div class="detail-body">
+    <h2>The Golden Rule of Marketplaces</h2>
+    <p><strong>Every successful housing marketplace achieved density before breadth.</strong> This isn't opinion — it's a pattern across every company in this space:</p>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Company</th><th>At 12 Months</th><th>At 24 Months</th><th>At 36 Months</th><th>Key Move</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Spotahome</strong></td><td>200 listings, 1 city</td><td>2K listings, 4 cities</td><td>8K listings</td><td>Madrid density first</td></tr>
+          <tr><td><strong>HousingAnywhere</strong></td><td>500 listings, students</td><td>3K listings, NL+DE</td><td>10K listings, 6 countries</td><td>Rotterdam campus</td></tr>
+          <tr><td><strong>Blueground</strong></td><td>50 own apts, Athens</td><td>300 apts, 3 cities</td><td>1,500 apts</td><td>Operated own supply</td></tr>
+          <tr><td><strong>Flatio</strong></td><td>100 listings, Prague</td><td>1,500 listings</td><td>5K listings, EU</td><td>Nomad-focused</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-box-label">Critical Lesson</div>
+      <p>Spotahome spent $104M and 10 years — and <strong>85% of their volume still comes from just 8 cities.</strong> Marketplace depth always beats breadth. Concentrate resources on winning markets where you already have a foothold.</p>
+    </div>
+
+    <h2>Three Growth Loops to Build</h2>
+    <p>Sustainable marketplace growth comes from compounding loops, not one-off campaigns:</p>
+    <ul class="detail-list">
+      <li><strong>SEO Loop:</strong> Programmatic pages for every city + neighborhood + property type. 500 cities x 10 neighborhoods x 5 types = 25,000 indexable pages. HousingAnywhere generates 60%+ of traffic this way.</li>
+      <li><strong>Network Effect Loop:</strong> More supply in a city creates better tenant experience, which drives word-of-mouth, which attracts more landlords. But this only works with sufficient density.</li>
+      <li><strong>Content/Community Loop:</strong> City guides, relocation content, nomad community features. Positions the platform as the knowledge hub, not just a listing site.</li>
+    </ul>
+
+    <h2>Supply-Side Priority</h2>
+    <p>Target <strong>property management companies and co-living operators</strong> over individual landlords:</p>
+    <ul class="detail-list">
+      <li>Higher listing volume per relationship (10-500 units per partner vs. 1)</li>
+      <li>Professional reliability (consistent quality, faster response, legal compliance)</li>
+      <li>Already digitized (API integrations possible, data standardized)</li>
+      <li>Co-living operators serve the nomad demographic specifically</li>
+    </ul>
+
+    <h2>Highest-Leverage Investment</h2>
+    <p><strong>Programmatic SEO</strong> is the single highest-leverage growth investment. Each programmatic page ("apartments for rent in Medellin El Poblado") serves as both a search landing page for tenants and a supply acquisition tool for landlords who discover the platform through their own property searches.</p>
+
+    <div class="section-nav">
+      <button class="section-nav-btn" onclick="showDetail('competitive')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Competitive Landscape</button>
+      <button class="section-nav-btn" onclick="showDetail('wedge')">Strategic Positioning <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- STRATEGIC POSITIONING -->
+<div class="view" id="detail-wedge">
+  <div class="detail-header">
+    <div class="detail-header-inner">
+      <div class="detail-section-num">Section 06</div>
+      <div class="detail-title">Strategic Positioning</div>
+      <div class="detail-subtitle">Trust infrastructure — not translation — is the durable moat that compounds over time.</div>
+    </div>
+  </div>
+  <div class="detail-body">
+    <h2>The Cross-Border Pain Point</h2>
+    <p>When someone needs housing in a country where they don't speak the language, don't have local references, and can't physically visit — existing solutions fail across every dimension:</p>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Barrier</th><th>How It Manifests</th><th>Current Solution</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Language</strong></td><td>Can't read listings or communicate with landlords</td><td>Google Translate (inadequate for contracts)</td></tr>
+          <tr><td><strong>Trust</strong></td><td>Can't verify landlord, property, or neighborhood</td><td>None systematic</td></tr>
+          <tr><td><strong>Access</strong></td><td>Can't sign local leases, provide guarantors, pass credit checks</td><td>Informal networks only</td></tr>
+          <tr><td><strong>Payment</strong></td><td>Can't pay local currency, transfer deposits safely</td><td>Wire transfers (high risk)</td></tr>
+          <tr><td><strong>Legal</strong></td><td>Don't understand tenant rights, lease terms, tax obligations</td><td>Expensive lawyers</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Trust Over Translation</h2>
+    <p><strong>Translation is commoditizing.</strong> Google Translate, DeepL, and GPT-based translation are free and improving rapidly. Within 2-3 years, language barriers in online content will be functionally eliminated. Any competitor can add translation in an afternoon.</p>
+    <p><strong>Trust infrastructure is the durable moat.</strong> A platform that provides verified landlord identity, property verification, transaction security, local knowledge, and standardized cross-border leases has a moat that compounds with every verified transaction. Reputation data is impossible to replicate quickly.</p>
+
+    <div class="insight-box">
+      <div class="insight-box-label">Strategic Recommendation</div>
+      <p>Invest in <strong>trust-building infrastructure</strong> over translation features: verified landlord identity (government ID + business registration), property verification (verified photos, condition guarantees), transaction security (escrow + refund guarantees), and local knowledge (neighborhood intelligence, safety data). Each layer compounds your defensibility.</p>
+    </div>
+
+    <h2>Key Nomad Corridors</h2>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Corridor</th><th>Annual Flow</th><th>Housing Spend</th><th>Opportunity</th></tr></thead>
+        <tbody>
+          <tr><td>US/Canada to LatAm</td><td>2.1M nomads</td><td class="highlight">$25B+</td><td>High</td></tr>
+          <tr><td>EU to Southern EU</td><td>1.5M relocators</td><td class="highlight">$18B+</td><td>High</td></tr>
+          <tr><td>Global to Southeast Asia</td><td>3.2M expats</td><td class="highlight">$28B+</td><td>High</td></tr>
+          <tr><td>MENA to EU/UK</td><td>800K migrants</td><td>$12B+</td><td>Medium</td></tr>
+          <tr><td>East Asia to ANZ</td><td>1.1M students</td><td>$15B+</td><td>Medium</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>The Bull Case</h2>
+    <p>Remote work creates permanent demand for flexible global housing. AI + verification eliminates trust barriers. First mover in nomad corridors builds unassailable supply density. Fintech services create 40%+ margins. <strong>Outcome: $500M-2B revenue within 7-10 years.</strong></p>
+
+    <div class="section-nav">
+      <button class="section-nav-btn" onclick="showDetail('gtm')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Go-to-Market</button>
+      <button class="section-nav-btn" onclick="showDetail('risks')">Key Risks <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- RISKS -->
+<div class="view" id="detail-risks">
+  <div class="detail-header">
+    <div class="detail-header-inner">
+      <div class="detail-section-num">Section 07</div>
+      <div class="detail-title">Key Risks & Challenges</div>
+      <div class="detail-subtitle">Every market this big comes with real challenges. Here's what to watch and how to mitigate.</div>
+    </div>
+  </div>
+  <div class="detail-body">
+    <h2>Top Risks Ranked</h2>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>#</th><th>Risk</th><th>Severity</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Liquidity / Chicken-and-Egg</strong></td><td style="color:var(--danger);font-weight:600">Critical</td><td>Concentrate supply in 3-5 cities; partner with property managers for bulk onboarding</td></tr>
+          <tr><td>2</td><td><strong>Regulatory Complexity</strong></td><td style="color:var(--danger);font-weight:600">Critical</td><td>Start as listing platform (minimal licensing); add transaction capability market-by-market</td></tr>
+          <tr><td>3</td><td><strong>Incumbent Response</strong></td><td style="color:var(--warning);font-weight:600">High</td><td>Build trust infrastructure moat before Airbnb/Booking.com enter; focus on mid-term housing (1-6 months) they underserve</td></tr>
+          <tr><td>4</td><td><strong>Fraud Exposure</strong></td><td style="color:var(--warning);font-weight:600">High</td><td>Mandatory landlord verification, escrow payments, property verification before go-live</td></tr>
+          <tr><td>5</td><td><strong>Growth Infrastructure</strong></td><td style="color:var(--warning);font-weight:600">High</td><td>Invest in programmatic SEO, content marketing, and community building from Day 1</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>The Liquidity Challenge</h2>
+    <p>This is the existential challenge for any marketplace. You need minimum viable supply in each city before the user experience becomes functional:</p>
+    <ul class="detail-list">
+      <li>Major city: 500-1,000 active listings minimum</li>
+      <li>Mid-tier city: 100-300 listings minimum</li>
+      <li>Below these thresholds, users search, find nothing useful, and never return</li>
+    </ul>
+
+    <div class="warning-box">
+      <div class="warning-box-label">Key Learning from Competitors</div>
+      <p>Spreading thin across many markets is a known anti-pattern. A user who searches and finds only 2-3 options leaves disappointed and never comes back. <strong>Better to have 1,000 listings in Medellin than 50 listings each in 20 cities.</strong></p>
+    </div>
+
+    <h2>Regulatory Landscape</h2>
+    <p>Operating across multiple countries triggers different regulatory requirements depending on how you classify:</p>
+    <ul class="detail-list">
+      <li><strong>Listing platform</strong> (display listings, parties transact independently) — minimal licensing, lowest friction</li>
+      <li><strong>Marketplace/intermediary</strong> (facilitate transactions, hold funds) — payment regulations apply</li>
+      <li><strong>Brokerage</strong> (represent parties, negotiate terms) — full RE licensing per jurisdiction</li>
+    </ul>
+
+    <div class="insight-box">
+      <div class="insight-box-label">Recommended Approach</div>
+      <p><strong>Start as a listing platform</strong> to minimize regulatory burden. Add transaction capability (escrow, payments) one jurisdiction at a time as you prove demand. This lets you launch fast while building compliance infrastructure incrementally.</p>
+    </div>
+
+    <h2>Fraud Prevention</h2>
+    <p>Cross-border amplifies fraud risk because different legal systems make prosecution nearly impossible. Key data points:</p>
+    <ul class="detail-list">
+      <li>US RE fraud losses reached $275M in 2025, up 59% year-over-year</li>
+      <li>1 in 5 rental listings online are estimated to be fraudulent</li>
+      <li>Identity fraud in RE: $1.1B globally, growing 45% annually</li>
+    </ul>
+    <p><strong>Building verification infrastructure is both a trust moat and a fraud defense.</strong> Verified landlord IDs, verified property photos, and escrow payments solve both problems simultaneously.</p>
+
+    <div class="section-nav">
+      <button class="section-nav-btn" onclick="showDetail('wedge')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Strategic Positioning</button>
+      <button class="section-nav-btn" onclick="showDetail('roadmap')">Roadmap <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<div class="view" id="detail-roadmap">
+  <div class="detail-header">
+    <div class="detail-header-inner">
+      <div class="detail-section-num">Section 08</div>
+      <div class="detail-title">Recommended Roadmap</div>
+      <div class="detail-subtitle">A three-phase execution plan grounded in what actually worked for comparable platforms.</div>
+    </div>
+  </div>
+  <div class="detail-body">
+    <h2>Three-Phase Execution Plan</h2>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot">1</div>
+        <div class="timeline-content">
+          <div class="timeline-title">Dominate Medellin</div>
+          <div class="timeline-period">Months 1-6</div>
+          <div class="timeline-desc">You already have Colombia traction — lean into it. Medellin is a top-5 digital nomad hub globally. Target: 500+ verified listings, 50+ bookings/month. Channels: local expat Facebook groups, nomad Slack communities, co-working partnerships. Build the trust infrastructure here: landlord verification, escrow, property photos.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">2</div>
+        <div class="timeline-content">
+          <div class="timeline-title">Expand to 3-5 LatAm Expat Hubs</div>
+          <div class="timeline-period">Months 6-12</div>
+          <div class="timeline-desc">Mexico City, Bogota, Buenos Aires, Lima, Playa del Carmen. Replicate the Medellin playbook in each city. Target: 200+ listings per city, cross-city bookings starting to flow. Launch programmatic SEO. This is where the US/Canada-to-LatAm corridor ($25B+) starts to fire.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">3</div>
+        <div class="timeline-content">
+          <div class="timeline-title">Major Nomad Corridors</div>
+          <div class="timeline-period">Months 12-24</div>
+          <div class="timeline-desc">Lisbon, Barcelona, Bangkok, Bali — the global Tier 1 nomad hubs. Target: 10,000+ bookings/month across all markets. Launch fintech services (FX, deposit alternatives, insurance). Begin B2B corporate relocation channel. At this scale, network effects compound and the moat deepens.</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Priority Investments</h2>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Investment</th><th>Priority</th><th>Impact</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Landlord Verification System</strong></td><td style="color:var(--danger);font-weight:600">Critical</td><td>Trust moat, fraud prevention</td><td>Now</td></tr>
+          <tr><td><strong>SEO Foundation</strong></td><td style="color:var(--danger);font-weight:600">Critical</td><td>Organic acquisition engine</td><td>Now</td></tr>
+          <tr><td><strong>Analytics (GA / Mixpanel)</strong></td><td style="color:var(--danger);font-weight:600">Critical</td><td>Can't improve what you can't measure</td><td>Now</td></tr>
+          <tr><td><strong>Payment Escrow</strong></td><td style="color:var(--warning);font-weight:600">High</td><td>Transaction security, revenue</td><td>Month 2</td></tr>
+          <tr><td><strong>Programmatic City Pages</strong></td><td style="color:var(--warning);font-weight:600">High</td><td>25K indexable pages, SEO flywheel</td><td>Month 3</td></tr>
+          <tr><td><strong>Review/Rating System</strong></td><td style="color:var(--warning);font-weight:600">High</td><td>Social proof, trust compound</td><td>Month 3</td></tr>
+          <tr><td><strong>Native Mobile App</strong></td><td>Medium</td><td>Primary channel for nomads</td><td>Month 6</td></tr>
+          <tr><td><strong>FX Services Integration</strong></td><td>Medium</td><td>40-50% margin revenue</td><td>Month 6</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-box-label">Bottom Line</div>
+      <p>The market is real, the timing is right, and the playbook is clear. <strong>Win Medellin first.</strong> Build trust infrastructure that compounds. Expand through proven nomad corridors. The companies that succeeded in this space all did it the same way — one city at a time, with relentless focus on density and user experience. The opportunity is massive for whoever executes this right.</p>
+    </div>
+
+    <div class="section-nav">
+      <button class="section-nav-btn" onclick="showDetail('risks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Key Risks</button>
+      <button class="section-nav-btn" onclick="showOverview()">Back to Overview <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Navigation ──
+const sections = ['market','icp','business','competitive','gtm','wedge','risks','roadmap'];
+const sectionNames = {
+  market: 'Market Opportunity',
+  icp: 'Your Ideal Customer',
+  business: 'Business Model',
+  competitive: 'Competitive Landscape',
+  gtm: 'Go-to-Market Strategy',
+  wedge: 'Strategic Positioning',
+  risks: 'Key Risks',
+  roadmap: 'Roadmap'
+};
+let currentSection = null;
+
+function showOverview(pushHistory) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('overviewView').classList.add('active');
+  document.body.classList.remove('detail-view');
+  currentSection = null;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (pushHistory !== false) history.pushState({ section: null }, '', '#');
+  updateNav();
+}
+
+function showDetail(id, pushHistory) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('detail-' + id).classList.add('active');
+  document.body.classList.add('detail-view');
+  currentSection = id;
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  if (pushHistory !== false) history.pushState({ section: id }, '', '#' + id);
+  updateNav();
+}
+
+// Browser back/forward button support
+window.addEventListener('popstate', function(e) {
+  if (e.state && e.state.section) {
+    showDetail(e.state.section, false);
+  } else {
+    showOverview(false);
+  }
+});
+
+// Handle direct link with hash on page load
+(function() {
+  const hash = location.hash.replace('#', '');
+  if (hash && sections.includes(hash)) {
+    showDetail(hash, false);
+  } else {
+    history.replaceState({ section: null }, '', location.pathname);
+  }
+})();
+
+function updateNav() {
+  // Progress bar
+  const fill = document.getElementById('progressFill');
+  if (!currentSection) { fill.style.width = '0%'; } else {
+    const idx = sections.indexOf(currentSection);
+    fill.style.width = ((idx + 1) / sections.length * 100) + '%';
+  }
+
+  // Bottom nav active state
+  document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.section === currentSection);
+  });
+
+  // Scroll active bottom nav item into view
+  const activeBtn = document.querySelector('.bottom-nav-item.active');
+  if (activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
+  // Top nav breadcrumb
+  const nameEl = document.getElementById('topnavSectionName');
+  const numEl = document.getElementById('topnavSectionNum');
+  if (currentSection) {
+    nameEl.textContent = sectionNames[currentSection];
+    const idx = sections.indexOf(currentSection);
+    numEl.textContent = (idx + 1) + ' / ' + sections.length;
+  }
+}
+
+// ── Scroll-based topnav shadow ──
+window.addEventListener('scroll', () => {
+  document.getElementById('topnav').classList.toggle('scrolled', window.scrollY > 10);
+});
+
+// ── Intersection Observer for fade-up animations ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ── Count-up animation for stat numbers ──
+function animateCountUp() {
+  document.querySelectorAll('.stat-number[data-count]').forEach(el => {
+    const target = parseFloat(el.dataset.count);
+    const unit = el.querySelector('.unit');
+    const unitText = unit ? unit.textContent : '';
+    const duration = 1500;
+    const start = performance.now();
+
+    function tick(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = (target * eased).toFixed(target < 20 ? 1 : 0);
+      el.textContent = current;
+      if (unit) {
+        const newUnit = document.createElement('span');
+        newUnit.className = 'unit';
+        newUnit.textContent = unitText;
+        el.appendChild(newUnit);
+      }
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+// trigger count-up when hero is visible
+const heroObserver = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) {
+    animateCountUp();
+    heroObserver.disconnect();
+  }
+}, { threshold: 0.3 });
+const statBar = document.querySelector('.stat-bar');
+if (statBar) heroObserver.observe(statBar);
+
+// ── Keyboard navigation ──
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && currentSection) showOverview();
+  if (e.key === 'ArrowRight' && currentSection) {
+    const idx = sections.indexOf(currentSection);
+    if (idx < sections.length - 1) showDetail(sections[idx + 1]);
+  }
+  if (e.key === 'ArrowLeft' && currentSection) {
+    const idx = sections.indexOf(currentSection);
+    if (idx > 0) showDetail(sections[idx - 1]);
+  }
+});
+</script>
+</body>
+</html>

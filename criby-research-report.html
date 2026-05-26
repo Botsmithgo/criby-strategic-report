@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criby Research Report — Deep Intelligence Brief</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0a0b0f;
+    --bg-card: #12141c;
+    --bg-card-hover: #1a1d2a;
+    --bg-surface: #161822;
+    --border: #1e2235;
+    --border-hover: #2a2f48;
+    --text: #e4e6f0;
+    --text-dim: #8b8fa8;
+    --text-muted: #5a5e78;
+    --accent: #6366f1;
+    --accent-glow: rgba(99, 102, 241, 0.15);
+    --green: #22c55e;
+    --green-dim: rgba(34, 197, 94, 0.12);
+    --red: #ef4444;
+    --red-dim: rgba(239, 68, 68, 0.12);
+    --amber: #f59e0b;
+    --amber-dim: rgba(245, 158, 11, 0.12);
+    --cyan: #06b6d4;
+    --purple: #a855f7;
+    --gradient: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+    --gradient-subtle: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(168,85,247,0.08));
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; font-size: 15px; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* === SCROLLBAR === */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* === PROGRESS BAR === */
+  #progress { position: fixed; top: 0; left: 0; height: 2px; background: var(--gradient); z-index: 9999; transition: width 0.1s; width: 0%; }
+
+  /* === NAV === */
+  nav {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 260px; background: var(--bg-card);
+    border-right: 1px solid var(--border); padding: 24px 0; z-index: 100;
+    overflow-y: auto; display: flex; flex-direction: column;
+  }
+  nav .logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  nav .logo h2 { font-size: 1rem; font-weight: 700; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.02em; }
+  nav .logo p { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.08em; }
+  nav a {
+    display: flex; align-items: center; gap: 10px; padding: 8px 20px; font-size: 0.78rem;
+    color: var(--text-dim); text-decoration: none; transition: all 0.2s; border-left: 2px solid transparent;
+  }
+  nav a:hover { color: var(--text); background: var(--gradient-subtle); }
+  nav a.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-glow); font-weight: 600; }
+  nav a .num { font-family: 'JetBrains Mono'; font-size: 0.65rem; color: var(--text-muted); min-width: 20px; }
+  nav .nav-footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border); }
+  nav .nav-footer .score-badge {
+    display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px;
+    background: var(--red-dim); border: 1px solid rgba(239,68,68,0.2);
+  }
+  nav .nav-footer .score-badge .score { font-family: 'JetBrains Mono'; font-size: 1.3rem; font-weight: 800; color: var(--red); }
+  nav .nav-footer .score-badge .label { font-size: 0.68rem; color: var(--text-dim); line-height: 1.3; }
+
+  /* === MAIN === */
+  main { margin-left: 260px; min-height: 100vh; }
+
+  /* === HERO === */
+  .hero {
+    position: relative; padding: 100px 60px 60px; overflow: hidden;
+    background: linear-gradient(180deg, #12141c 0%, var(--bg) 100%);
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -200px; right: -200px; width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%); pointer-events: none;
+  }
+  .hero .badge {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 100px;
+    background: var(--accent-glow); border: 1px solid rgba(99,102,241,0.3); font-size: 0.72rem;
+    color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 20px;
+  }
+  .hero .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .hero h1 { font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 12px; max-width: 700px; }
+  .hero h1 span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .subtitle { font-size: 1.15rem; color: var(--text-dim); max-width: 600px; margin-bottom: 32px; font-weight: 400; }
+  .hero .meta { display: flex; gap: 24px; font-size: 0.78rem; color: var(--text-muted); }
+  .hero .meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* === ALERT BANNER === */
+  .alert-banner {
+    margin: 0 60px 40px; padding: 20px 24px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(245,158,11,0.06));
+    border: 1px solid rgba(239,68,68,0.2); display: flex; gap: 16px; align-items: flex-start;
+  }
+  .alert-banner .icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+  .alert-banner h3 { font-size: 0.88rem; color: var(--red); font-weight: 700; margin-bottom: 6px; }
+  .alert-banner p { font-size: 0.82rem; color: var(--text-dim); line-height: 1.6; }
+
+  /* === SECTIONS === */
+  section { padding: 40px 60px 60px; border-top: 1px solid var(--border); }
+  section .section-header { margin-bottom: 32px; }
+  section .section-header .section-num {
+    font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--accent); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px;
+  }
+  section h2 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 4px; }
+  section h2 span.conf {
+    font-size: 0.7rem; font-weight: 600; padding: 3px 10px; border-radius: 100px; margin-left: 10px; vertical-align: middle;
+  }
+  .conf-high { background: var(--green-dim); color: var(--green); }
+  .conf-med { background: var(--amber-dim); color: var(--amber); }
+  .conf-low { background: var(--red-dim); color: var(--red); }
+  section h3 { font-size: 1.1rem; font-weight: 700; margin: 28px 0 14px; letter-spacing: -0.01em; }
+  section h4 { font-size: 0.92rem; font-weight: 600; color: var(--text-dim); margin: 20px 0 10px; }
+  section p { color: var(--text-dim); margin-bottom: 14px; max-width: 780px; font-size: 0.92rem; }
+  section strong { color: var(--text); font-weight: 600; }
+  section ul, section ol { margin: 10px 0 18px 20px; color: var(--text-dim); font-size: 0.9rem; }
+  section li { margin-bottom: 6px; }
+
+  /* === STAT CARDS === */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 24px 0; }
+  .stat-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+    transition: all 0.25s; position: relative; overflow: hidden;
+  }
+  .stat-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+  .stat-card .stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .stat-card .stat-value { font-family: 'JetBrains Mono'; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
+  .stat-card .stat-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+  .stat-card.green .stat-value { color: var(--green); }
+  .stat-card.red .stat-value { color: var(--red); }
+  .stat-card.amber .stat-value { color: var(--amber); }
+  .stat-card.accent .stat-value { color: var(--accent); }
+  .stat-card.cyan .stat-value { color: var(--cyan); }
+
+  /* === CLAIMS VS REALITY === */
+  .claims-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-radius: 12px; overflow: hidden; margin: 24px 0; }
+  .claims-grid .col-header {
+    padding: 14px 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .claims-grid .col-header.claim { background: var(--bg-card); color: var(--text-dim); }
+  .claims-grid .col-header.reality { background: var(--bg-card); color: var(--red); }
+  .claims-grid .cell { padding: 14px 20px; background: var(--bg-surface); font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+  .claims-grid .cell.claim-cell { color: var(--text-dim); }
+  .claims-grid .cell.reality-cell { color: var(--red); font-weight: 500; }
+  .claims-grid .cell .tag {
+    font-size: 0.6rem; padding: 2px 7px; border-radius: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .tag-false { background: var(--red-dim); color: var(--red); }
+  .tag-partial { background: var(--amber-dim); color: var(--amber); }
+  .tag-true { background: var(--green-dim); color: var(--green); }
+
+  /* === TABLES === */
+  .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 12px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  thead { background: var(--bg-card); }
+  th {
+    padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-dim);
+    text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.06em; border-bottom: 1px solid var(--border);
+  }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text-dim); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(99,102,241,0.03); }
+  td strong { color: var(--text); }
+  td.mono { font-family: 'JetBrains Mono'; font-size: 0.8rem; }
+
+  /* === SCORE BARS === */
+  .score-row { display: flex; align-items: center; gap: 14px; margin: 8px 0; }
+  .score-row .score-label { font-size: 0.82rem; color: var(--text-dim); min-width: 160px; }
+  .score-row .score-bar { flex: 1; height: 8px; background: var(--bg-card); border-radius: 4px; overflow: hidden; max-width: 300px; }
+  .score-row .score-bar .fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+  .score-row .score-val { font-family: 'JetBrains Mono'; font-size: 0.82rem; font-weight: 700; min-width: 36px; text-align: right; }
+
+  /* === INFO CARDS === */
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin: 24px 0; }
+  .info-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .info-card:hover { border-color: var(--border-hover); }
+  .info-card h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+  .info-card p { font-size: 0.82rem; margin-bottom: 0; }
+  .info-card .card-tag { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .info-card .card-tag.bull { color: var(--green); }
+  .info-card .card-tag.bear { color: var(--red); }
+
+  /* === RISK TABLE === */
+  .risk-row {
+    display: grid; grid-template-columns: 36px 1fr 80px 80px 120px; gap: 12px; align-items: center;
+    padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 0.82rem;
+  }
+  .risk-row:last-child { border-bottom: none; }
+  .risk-row .rank { font-family: 'JetBrains Mono'; font-weight: 800; color: var(--text-muted); }
+  .risk-row .risk-name { color: var(--text); font-weight: 600; }
+  .risk-row .severity, .risk-row .likelihood {
+    text-align: center; font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; text-transform: uppercase;
+  }
+  .sev-critical { background: var(--red-dim); color: var(--red); }
+  .sev-high { background: var(--amber-dim); color: var(--amber); }
+  .sev-med { background: rgba(6,182,212,0.12); color: var(--cyan); }
+
+  /* === VERDICT === */
+  .verdict-box {
+    margin: 40px 0; padding: 32px; border-radius: 16px; text-align: center;
+    background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(168,85,247,0.06));
+    border: 1px solid rgba(99,102,241,0.15);
+  }
+  .verdict-box .verdict-score { font-family: 'JetBrains Mono'; font-size: 4rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .verdict-box .verdict-label { font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+  .verdict-box .verdict-text { font-size: 1rem; color: var(--text-dim); max-width: 680px; margin: 20px auto 0; line-height: 1.7; }
+
+  /* === CORRIDOR MAP === */
+  .corridor-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+  .corridor-row:last-child { border-bottom: none; }
+  .corridor-row .arrow { color: var(--accent); font-weight: 600; }
+  .corridor-row .flow { font-family: 'JetBrains Mono'; font-size: 0.78rem; color: var(--cyan); min-width: 80px; text-align: right; }
+
+  /* === FOOTER === */
+  footer { padding: 40px 60px; border-top: 1px solid var(--border); margin-left: 0; text-align: center; }
+  footer p { font-size: 0.75rem; color: var(--text-muted); }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 1024px) {
+    nav { display: none; }
+    main { margin-left: 0; }
+    .hero, section, .alert-banner { padding-left: 24px; padding-right: 24px; }
+    .alert-banner { margin: 0 24px 24px; }
+    .hero h1 { font-size: 2rem; }
+    .claims-grid { grid-template-columns: 1fr; }
+    .risk-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+
+  /* === ANIMATIONS === */
+  .fade-in { opacity: 0; transform: translateY(16px); transition: all 0.5s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  .glow-line { height: 1px; background: var(--gradient); margin: 32px 0; opacity: 0.3; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav id="sidebar">
+  <div class="logo">
+    <h2>CRIBY INTELLIGENCE</h2>
+    <p>Deep Research Report</p>
+  </div>
+  <a href="#exec" class="active"><span class="num">01</span> Executive Summary</a>
+  <a href="#company"><span class="num">02</span> Company Overview</a>
+  <a href="#market"><span class="num">03</span> Market Opportunity</a>
+  <a href="#icp"><span class="num">04</span> Customer Analysis</a>
+  <a href="#competitive"><span class="num">05</span> Competitive Landscape</a>
+  <a href="#bizmodel"><span class="num">06</span> Business Model</a>
+  <a href="#product"><span class="num">07</span> Product & Tech</a>
+  <a href="#gtm"><span class="num">08</span> Go-to-Market</a>
+  <a href="#regulatory"><span class="num">09</span> Regulatory & Risk</a>
+  <a href="#financial"><span class="num">10</span> Financial Position</a>
+  <a href="#team"><span class="num">11</span> Team Assessment</a>
+  <a href="#wedge"><span class="num">12</span> Strategic Wedge</a>
+  <a href="#risks"><span class="num">13</span> Key Risks</a>
+  <a href="#verdict"><span class="num">14</span> Final Verdict</a>
+  <div class="nav-footer">
+    <div class="score-badge">
+      <div class="score">2.25</div>
+      <div class="label">Overall Score<br><strong style="color:var(--red)">Unproven</strong></div>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero" id="exec">
+  <div class="badge"><span class="dot"></span> Investment Research</div>
+  <h1>Criby: <span>Planet Earth's Housing Department</span></h1>
+  <p class="subtitle">Multi-agent deep research across 10 dimensions — market sizing, competitive intelligence, product teardown, team verification, regulatory analysis, and strategic assessment.</p>
+  <div class="meta">
+    <span>May 25, 2026</span>
+    <span>10 Research Agents</span>
+    <span>7,800 Words</span>
+    <span>100+ Sources</span>
+  </div>
+</div>
+
+<!-- ==================== ALERT ==================== -->
+<div class="alert-banner fade-in">
+  <div class="icon">&#9888;</div>
+  <div>
+    <h3>Critical Credibility Gap Detected</h3>
+    <p>This report identifies a <strong style="color:var(--red)">severe disconnect</strong> between Criby's public claims and observable reality. The company claims 1M+ users, $50M Sequoia funding, and TechCrunch/Forbes/Bloomberg press — <strong style="color:var(--red)">none of which can be independently verified</strong>. SimilarWeb shows 647 total visits/month. All 4 named executives are untraceable on LinkedIn. The market opportunity is genuine; the company's credibility is not established.</p>
+  </div>
+</div>
+
+<!-- ==================== EXEC SUMMARY ==================== -->
+<section id="exec-detail" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 01</div>
+    <h2>Executive Summary</h2>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card red">
+      <div class="stat-label">Monthly Visits (Actual)</div>
+      <div class="stat-value">647</div>
+      <div class="stat-sub">vs 1M+ claimed</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Addressable Market</div>
+      <div class="stat-value">$2-4T</div>
+      <div class="stat-sub">cross-border housing</div>
+    </div>
+    <div class="stat-card accent">
+      <div class="stat-label">Digital Nomads</div>
+      <div class="stat-value">43M</div>
+      <div class="stat-sub">projected 80M by 2030</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-label">Global Expats</div>
+      <div class="stat-value">281M</div>
+      <div class="stat-sub">+2.4% annually</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-value stat-label" style="font-size:0.72rem">Verified Funding</div>
+      <div class="stat-value">$0</div>
+      <div class="stat-sub">$50M Sequoia unverifiable</div>
+    </div>
+    <div class="stat-card cyan">
+      <div class="stat-label">Nomad Visa Countries</div>
+      <div class="stat-value">66+</div>
+      <div class="stat-sub">up from ~10 in 2019</div>
+    </div>
+  </div>
+
+  <p>Criby is pursuing a thesis that is strategically sound — a unified global housing platform for the 300M+ people living across borders. The macro tailwinds (remote work, nomad visas, AI translation) are real and growing. But the company behind the thesis shows <strong>zero verifiable traction</strong>, a team that cannot be found on any professional network, and metrics that appear fabricated.</p>
+  <p>The core question this report answers: <strong>Is this a real opportunity?</strong> Yes. <strong>Is this a credible company?</strong> The evidence says no — or at minimum, unproven.</p>
+</section>
+
+<!-- ==================== COMPANY OVERVIEW ==================== -->
+<section id="company" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 02</div>
+    <h2>Company Overview <span class="conf conf-low">LOW CONFIDENCE</span></h2>
+  </div>
+
+  <h3>Claims vs. Reality</h3>
+  <div class="claims-grid">
+    <div class="col-header claim">What Criby Claims</div>
+    <div class="col-header reality">What We Found</div>
+    <div class="cell claim-cell">1,000,000+ monthly users</div>
+    <div class="cell reality-cell"><span class="tag tag-false">FALSE</span> 647 visits/month (SimilarWeb)</div>
+    <div class="cell claim-cell">50,000+ property listings</div>
+    <div class="cell reality-cell"><span class="tag tag-false">FALSE</span> ~12 visible in default view</div>
+    <div class="cell claim-cell">100+ countries covered</div>
+    <div class="cell reality-cell"><span class="tag tag-false">FALSE</span> 100% traffic from Colombia</div>
+    <div class="cell claim-cell">70+ languages supported</div>
+    <div class="cell reality-cell"><span class="tag tag-partial">PARTIAL</span> ConveyThis machine translation widget</div>
+    <div class="cell claim-cell">$50M Series B from Sequoia</div>
+    <div class="cell reality-cell"><span class="tag tag-false">FALSE</span> Not in Sequoia portfolio or any DB</div>
+    <div class="cell claim-cell">TechCrunch / Forbes / Bloomberg coverage</div>
+    <div class="cell reality-cell"><span class="tag tag-false">FALSE</span> No articles found in archives</div>
+    <div class="cell claim-cell">4-person C-suite leadership</div>
+    <div class="cell reality-cell"><span class="tag tag-false">UNVERIFIED</span> Zero LinkedIn presence</div>
+    <div class="cell claim-cell">Founded 2024, Miami HQ</div>
+    <div class="cell reality-cell"><span class="tag tag-partial">PARTIAL</span> Pricing in COP; ops in Medellin</div>
+  </div>
+
+  <h3>What Is Actually Observable</h3>
+  <div class="info-grid">
+    <div class="info-card">
+      <h4>Tech Stack</h4>
+      <p>Next.js + Turbopack + Mapbox GL JS + ConveyThis. Modern stack, 466ms page load, 51ms TTFB. Technically competent but near-empty.</p>
+    </div>
+    <div class="info-card">
+      <h4>SEO Infrastructure</h4>
+      <p>No sitemap.xml, no robots.txt, no structured data, no analytics detected. 1 organic keyword. Blog returns 404. Effectively invisible to search.</p>
+    </div>
+    <div class="info-card">
+      <h4>Pricing Model</h4>
+      <p>Free / Pro (~$47/mo) / Enterprise (~$190/mo) in COP. Commission 10%/5%/custom. Tenant fees 5-10%. 60-80% cheaper than HousingAnywhere.</p>
+    </div>
+    <div class="info-card">
+      <h4>Product Features</h4>
+      <p>Role-based signup (4 paths), map search with draw-to-search, WhatsApp integration, agent directory (returns 0 results), boosted listings concept.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MARKET OPPORTUNITY ==================== -->
+<section id="market" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 03</div>
+    <h2>Market Opportunity <span class="conf conf-high">HIGH CONFIDENCE</span></h2>
+  </div>
+  <p>The market thesis is strong — independent of whether Criby can capture it.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Market Layer</th><th>Size</th><th>Growth</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td>Global Residential RE</td><td class="mono"><strong>$10.5-11.6T</strong></td><td>5.2% CAGR</td><td>Statista / Grand View</td></tr>
+        <tr><td>PropTech Sector</td><td class="mono"><strong>$45-54B</strong></td><td>14-16% CAGR</td><td>MarketsandMarkets</td></tr>
+        <tr><td>Cross-Border Residential</td><td class="mono"><strong>$888.6B</strong></td><td>+14% YoY</td><td>Savills / Knight Frank</td></tr>
+        <tr><td>Platform-Intermediated SAM</td><td class="mono"><strong>$80-145B</strong></td><td>18-22% CAGR</td><td>Estimated</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Key Population Drivers</h3>
+  <div class="stats-grid">
+    <div class="stat-card accent"><div class="stat-label">Expats Worldwide</div><div class="stat-value">281M</div><div class="stat-sub">+2.4% annually (UN)</div></div>
+    <div class="stat-card green"><div class="stat-label">Digital Nomads</div><div class="stat-value">43M</div><div class="stat-sub">80M projected by 2030</div></div>
+    <div class="stat-card cyan"><div class="stat-label">Int'l Students</div><div class="stat-value">6.9M</div><div class="stat-sub">10M+ by 2030 (UNESCO)</div></div>
+    <div class="stat-card amber"><div class="stat-label">HNWI Relocating</div><div class="stat-value">142K</div><div class="stat-sub">All-time high, +12% YoY</div></div>
+    <div class="stat-card accent"><div class="stat-label">Remote Workers</div><div class="stat-value">52%</div><div class="stat-sub">of global workforce</div></div>
+    <div class="stat-card green"><div class="stat-label">Nomad Visa Countries</div><div class="stat-value">66+</div><div class="stat-sub">up from ~10 in 2019</div></div>
+  </div>
+
+  <h3>"Why Now" Tailwinds</h3>
+  <ul>
+    <li><strong>Remote work normalization</strong> — 52% global workforce, decoupling employment from location permanently</li>
+    <li><strong>Digital nomad visa proliferation</strong> — 66+ countries competing for remote worker spending</li>
+    <li><strong>AI translation maturity</strong> — 96% accuracy across 133 languages; real-time voice translation launching</li>
+    <li><strong>Post-COVID mobility recovery</strong> — Cross-border investment +12% in 2025; foreign buyer sales +44%</li>
+    <li><strong>PropTech investment surge</strong> — $16.7B in 2025 (+68% YoY), AI-proptech up 176%</li>
+  </ul>
+</section>
+
+<!-- ==================== ICP ==================== -->
+<section id="icp" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 04</div>
+    <h2>Customer Analysis <span class="conf conf-high">HIGH CONFIDENCE</span></h2>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Segment</th><th>Population</th><th>Search Freq</th><th>Avg Income</th><th>LTV:CAC</th><th>Priority</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Digital Nomads</strong></td><td class="mono">43M</td><td>3-6x/year</td><td class="mono">$124K</td><td class="mono" style="color:var(--green)">10-37x</td><td><span class="tag tag-true">PRIMARY</span></td></tr>
+        <tr><td><strong>Int'l Students</strong></td><td class="mono">6.9M</td><td>1x/year</td><td class="mono">$15-35K</td><td class="mono">8-16x</td><td><span class="tag tag-partial">YEAR 1-2</span></td></tr>
+        <tr><td><strong>Retirees</strong></td><td class="mono">12M+</td><td>1x/2-5yr</td><td class="mono">$45-120K</td><td class="mono">12-18x</td><td><span class="tag tag-partial">YEAR 2</span></td></tr>
+        <tr><td><strong>Corp. Relocators</strong></td><td class="mono">8.2M/yr</td><td>1-2x/year</td><td class="mono">$85-150K</td><td class="mono">6-12x</td><td><span class="tag" style="background:rgba(6,182,212,0.12);color:var(--cyan)">YEAR 2-3</span></td></tr>
+        <tr><td><strong>Investors</strong></td><td class="mono">2.1M</td><td>2-4x/year</td><td class="mono">$500K+</td><td class="mono">7-14x</td><td><span class="tag" style="background:rgba(168,85,247,0.12);color:var(--purple)">YEAR 3+</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>Why Digital Nomads first:</strong> Highest search frequency (3-6x/year) creates repeat engagement. $124K average income supports premium pricing. Platform-native behavior with strong community-driven organic acquisition. LTV:CAC ratio of 10-37x is exceptional.</p>
+</section>
+
+<!-- ==================== COMPETITIVE ==================== -->
+<section id="competitive" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 05</div>
+    <h2>Competitive Landscape <span class="conf conf-high">HIGH CONFIDENCE</span></h2>
+  </div>
+
+  <h3>Direct Competitors</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Company</th><th>Founded</th><th>Funding</th><th>Revenue</th><th>Focus</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Blueground</strong></td><td>2013</td><td class="mono">$258M</td><td class="mono">$560M</td><td>Furnished apts (operator)</td><td><span class="tag tag-true">SCALING</span></td></tr>
+        <tr><td><strong>Spotahome</strong></td><td>2014</td><td class="mono">$104M</td><td class="mono">$65M</td><td>EU mid-term (8 cities)</td><td><span class="tag tag-true">EBITDA+</span></td></tr>
+        <tr><td><strong>HousingAnywhere</strong></td><td>2009</td><td class="mono">$50.7M</td><td class="mono">$30-50M</td><td>Students/expats</td><td><span class="tag tag-partial">DECLINING VAL.</span></td></tr>
+        <tr><td><strong>Flatio</strong></td><td>2016</td><td class="mono">$8.5M</td><td class="mono">$8-15M</td><td>Nomad deposit-free</td><td><span class="tag tag-true">GROWING</span></td></tr>
+        <tr><td><strong>Uniplaces</strong></td><td>2013</td><td class="mono">$33M</td><td class="mono">$10-20M</td><td>Student housing</td><td><span class="tag tag-false">STAGNANT</span></td></tr>
+        <tr style="background:rgba(239,68,68,0.04)"><td><strong>Criby</strong></td><td>2024</td><td class="mono" style="color:var(--red)">$0 verified</td><td class="mono" style="color:var(--red)">~$0</td><td>Global (claimed)</td><td><span class="tag tag-false">PRE-PMF</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Regional Fortress Businesses</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Platform</th><th>Market</th><th>Revenue</th><th>Market Share</th><th>Margin</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Zillow</strong></td><td>US</td><td class="mono">$2.2B</td><td>70% traffic</td><td>12%</td></tr>
+        <tr><td><strong>Rightmove</strong></td><td>UK</td><td class="mono">GBP 425M</td><td>86% agent share</td><td style="color:var(--green)"><strong>70%</strong></td></tr>
+        <tr><td><strong>Scout24</strong></td><td>DACH</td><td class="mono">EUR 650M</td><td>85%+ agents</td><td>55%</td></tr>
+        <tr><td><strong>REA Group</strong></td><td>ANZ</td><td class="mono">AUD 1.7B</td><td>90% coverage</td><td>47%</td></tr>
+        <tr><td><strong>Idealista</strong></td><td>Iberia</td><td class="mono">EUR 2.9B val</td><td>60%+ Spain</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>Key insight:</strong> The white space Criby targets (global buy+rent in 70+ languages) is real — but may be structurally impossible to fill. Every successful RE platform achieved dominance through <strong>local depth</strong>, not global breadth. Spotahome gets 85% of volume from just 8 cities after 10 years.</p>
+</section>
+
+<!-- ==================== BUSINESS MODEL ==================== -->
+<section id="bizmodel" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 06</div>
+    <h2>Business Model & Unit Economics <span class="conf conf-med">MEDIUM CONFIDENCE</span></h2>
+  </div>
+
+  <h3>Pricing Architecture</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tier</th><th>Monthly Fee</th><th>Commission</th><th>Listings</th><th>Key Features</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Free</strong></td><td class="mono">$0</td><td class="mono">10%</td><td>Up to 3</td><td>Basic listing, standard placement</td></tr>
+        <tr><td><strong>Pro</strong></td><td class="mono">~$47</td><td class="mono">5%</td><td>Up to 25</td><td>Priority placement, analytics, verified badge</td></tr>
+        <tr><td><strong>Enterprise</strong></td><td class="mono">~$190</td><td class="mono">Custom</td><td>Unlimited</td><td>API access, white-label, dedicated support</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>The Liquidity Problem (Existential)</h3>
+  <div class="stats-grid">
+    <div class="stat-card red">
+      <div class="stat-label">Listings / Country</div>
+      <div class="stat-value">~500</div>
+      <div class="stat-sub">50K ÷ 100+ countries</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-label">Min. Viable Supply</div>
+      <div class="stat-value">2,000+</div>
+      <div class="stat-sub">per city needed</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">Actual Visible</div>
+      <div class="stat-value">~12</div>
+      <div class="stat-sub">listings in default view</div>
+    </div>
+  </div>
+  <p>At 500 listings per country average, most cities have single-digit inventory. A user searching for apartments in Berlin finds 0-5 options — an <strong>unusable experience</strong> that destroys retention. Marketplace depth always beats breadth.</p>
+
+  <h3>Revenue Path: Margin Multipliers</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Revenue Line</th><th>Margin</th><th>Market Size</th><th>Timing</th></tr></thead>
+      <tbody>
+        <tr><td>Deposit alternatives</td><td class="mono">60-70%</td><td class="mono">$12B</td><td>Year 2</td></tr>
+        <tr><td>Rent insurance</td><td class="mono">50-60%</td><td class="mono">$8B</td><td>Year 2</td></tr>
+        <tr><td>FX services</td><td class="mono">40-50%</td><td class="mono">$2.1T</td><td>Year 1</td></tr>
+        <tr><td>Corporate relocation</td><td class="mono">35-45%</td><td class="mono">$21.7B</td><td>Year 2-3</td></tr>
+        <tr><td>Mortgage referral</td><td class="mono">30-40%</td><td class="mono">$888B</td><td>Year 3+</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== PRODUCT ==================== -->
+<section id="product" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 07</div>
+    <h2>Product & Technology <span class="conf conf-med">MEDIUM CONFIDENCE</span></h2>
+  </div>
+
+  <h3>Tech Stack</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Layer</th><th>Technology</th><th>Assessment</th></tr></thead>
+      <tbody>
+        <tr><td>Framework</td><td>Next.js + Turbopack</td><td style="color:var(--green)">Modern, performant</td></tr>
+        <tr><td>Maps</td><td>Mapbox GL JS</td><td style="color:var(--green)">Industry standard</td></tr>
+        <tr><td>Translation</td><td>ConveyThis widget</td><td style="color:var(--amber)">Not native i18n</td></tr>
+        <tr><td>Hosting</td><td>Vercel (likely)</td><td style="color:var(--green)">Standard for Next.js</td></tr>
+        <tr><td>Mobile</td><td>Responsive web only</td><td style="color:var(--red)">Broken on mobile</td></tr>
+        <tr><td>Analytics</td><td>None detected</td><td style="color:var(--red)">Critical gap</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Critical Missing Infrastructure</h3>
+  <div class="info-grid">
+    <div class="info-card" style="border-left: 3px solid var(--red)">
+      <div class="card-tag bear">CRITICAL</div>
+      <h4>No Analytics</h4>
+      <p>No GA, GTM, Mixpanel, or Hotjar detected. Cannot measure user behavior, conversion funnels, or iterate on product.</p>
+    </div>
+    <div class="info-card" style="border-left: 3px solid var(--red)">
+      <div class="card-tag bear">CRITICAL</div>
+      <h4>No SEO Foundation</h4>
+      <p>No sitemap.xml, robots.txt, structured data, or Open Graph tags. 1 organic keyword ranking. Invisible to search engines.</p>
+    </div>
+    <div class="info-card" style="border-left: 3px solid var(--red)">
+      <div class="card-tag bear">CRITICAL</div>
+      <h4>No Trust System</h4>
+      <p>No review/rating system for properties. No escrow. No verification process documented. "Verified" badge tied to payment tier.</p>
+    </div>
+    <div class="info-card" style="border-left: 3px solid var(--amber)">
+      <div class="card-tag" style="color:var(--amber)">HIGH</div>
+      <h4>No Mobile App</h4>
+      <p>No native iOS/Android app. Responsive web is broken — sidebar doesn't collapse on mobile viewports.</p>
+    </div>
+  </div>
+
+  <h3>Performance (Bright Spot)</h3>
+  <div class="stats-grid">
+    <div class="stat-card green"><div class="stat-label">Page Load</div><div class="stat-value">466ms</div><div class="stat-sub">Excellent</div></div>
+    <div class="stat-card green"><div class="stat-label">TTFB</div><div class="stat-value">51ms</div><div class="stat-sub">Excellent</div></div>
+    <div class="stat-card amber"><div class="stat-label">Resources</div><div class="stat-value">62</div><div class="stat-sub">Moderate</div></div>
+    <div class="stat-card green"><div class="stat-label">Transfer Size</div><div class="stat-value">8KB</div><div class="stat-sub">Very small (near-empty)</div></div>
+  </div>
+</section>
+
+<!-- ==================== GTM ==================== -->
+<section id="gtm" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 08</div>
+    <h2>Go-to-Market & Growth <span class="conf conf-low">LOW CONFIDENCE</span></h2>
+  </div>
+  <p>Every growth channel is either non-existent or non-functional. The company is invisible outside its own domain.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Channel</th><th>Status</th><th>Metric</th></tr></thead>
+      <tbody>
+        <tr><td>Organic Search</td><td style="color:var(--red)">Non-functional</td><td class="mono">1 keyword ranking</td></tr>
+        <tr><td>Direct Traffic</td><td style="color:var(--red)">Minimal</td><td class="mono">647 visits/month total</td></tr>
+        <tr><td>Social Media</td><td style="color:var(--red)">Non-existent</td><td>No profiles detected</td></tr>
+        <tr><td>Content Marketing</td><td style="color:var(--red)">Non-existent</td><td>Blog returns 404</td></tr>
+        <tr><td>App Store</td><td style="color:var(--red)">Non-existent</td><td>No app listed</td></tr>
+        <tr><td>Paid Ads</td><td style="color:var(--red)">Not detected</td><td>No ad library results</td></tr>
+        <tr><td>PR / Press</td><td style="color:var(--red)">Fabricated</td><td>Claimed articles don't exist</td></tr>
+        <tr><td>Partnerships</td><td style="color:var(--red)">None visible</td><td>No integrations found</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Three Growth Loops — All Broken</h3>
+  <div class="info-grid">
+    <div class="info-card" style="border-left: 3px solid var(--red)">
+      <h4>SEO Loop</h4>
+      <p>No sitemap, no structured data, no content pages. Zero programmatic SEO. Cannot rank for any housing query.</p>
+    </div>
+    <div class="info-card" style="border-left: 3px solid var(--red)">
+      <h4>Network Effect Loop</h4>
+      <p>~12 listings means poor tenant experience. No demand means no landlord incentive. Classic death spiral.</p>
+    </div>
+    <div class="info-card" style="border-left: 3px solid var(--red)">
+      <h4>Community / WOM Loop</h4>
+      <p>No social presence. No referral program. No engagement in expat/nomad communities anywhere online.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== REGULATORY ==================== -->
+<section id="regulatory" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 09</div>
+    <h2>Regulatory & Risk <span class="conf conf-high">HIGH CONFIDENCE</span></h2>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card red"><div class="stat-label">US RE Fraud (2025)</div><div class="stat-value">$275M</div><div class="stat-sub">+59% YoY (FBI)</div></div>
+    <div class="stat-card amber"><div class="stat-label">Fraudulent Listings</div><div class="stat-value">1 in 5</div><div class="stat-sub">rental listings online</div></div>
+    <div class="stat-card red"><div class="stat-label">OFAC Penalty</div><div class="stat-value">$4.7M</div><div class="stat-sub">RE sanctions violation (2025)</div></div>
+    <div class="stat-card amber"><div class="stat-label">GDPR Max Fine</div><div class="stat-value">4%</div><div class="stat-sub">of global revenue or EUR 20M</div></div>
+  </div>
+
+  <p>Operating a real estate marketplace across 100+ countries is a <strong>regulatory nightmare</strong>. No competitor has attempted this scope — and for good reason.</p>
+  <ul>
+    <li><strong>Licensing:</strong> 41 US states require firm registration for brokerage; classification as marketplace vs brokerage is jurisdiction-specific</li>
+    <li><strong>Data Privacy:</strong> GDPR, CCPA, LGPD, PIPL — each requires different consent, storage, and transfer mechanisms</li>
+    <li><strong>Data Localization:</strong> China, Russia, India require in-country data storage — dedicated infrastructure per country</li>
+    <li><strong>Financial:</strong> Money transmitter licensing if handling payments; AML/KYC obligations; OFAC sanctions screening</li>
+    <li><strong>Tax:</strong> 110+ countries impose digital services VAT/GST; DAC7 reporting in EU; FIRPTA withholding on US property</li>
+  </ul>
+</section>
+
+<!-- ==================== FINANCIAL ==================== -->
+<section id="financial" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 10</div>
+    <h2>Financial Position <span class="conf conf-low">VERY LOW CONFIDENCE</span></h2>
+  </div>
+
+  <h3>Funding Verification</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Database</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Crunchbase</td><td style="color:var(--red)">No entry</td></tr>
+        <tr><td>PitchBook</td><td style="color:var(--red)">No entry</td></tr>
+        <tr><td>Tracxn</td><td style="color:var(--red)">No entry</td></tr>
+        <tr><td>CB Insights</td><td style="color:var(--red)">No entry</td></tr>
+        <tr><td>Sequoia Portfolio</td><td style="color:var(--red)">Not listed</td></tr>
+        <tr><td>TechCrunch</td><td style="color:var(--red)">No articles</td></tr>
+        <tr><td>SEC EDGAR</td><td style="color:var(--red)">No filings</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>PropTech Funding Context</h3>
+  <p>The broader environment is supportive — <strong>$16.7B</strong> in PropTech VC in 2025 (+68% YoY). A $50M Series B for a cross-border platform is within market norms <em>if the company were performing</em>.</p>
+
+  <h3>Public Comparables</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Company</th><th>EV/Revenue</th><th>Margin</th><th>Growth</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Zillow</strong></td><td class="mono">3.3x</td><td>12%</td><td>15%</td></tr>
+        <tr><td><strong>REA Group</strong></td><td class="mono" style="color:var(--green)">11.75x</td><td>47%</td><td>18%</td></tr>
+        <tr><td><strong>Rightmove</strong></td><td class="mono">7.5x</td><td style="color:var(--green)"><strong>70%</strong></td><td>8%</td></tr>
+        <tr><td><strong>Scout24</strong></td><td class="mono">9.2x</td><td>55%</td><td>12%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== TEAM ==================== -->
+<section id="team" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 11</div>
+    <h2>Team Assessment <span class="conf conf-low">VERY LOW CONFIDENCE</span></h2>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Name</th><th>Role</th><th>LinkedIn</th><th>Crunchbase</th><th>Press</th><th>Conferences</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Sarah Chen</strong></td><td>CEO</td><td style="color:var(--red)">Not found</td><td style="color:var(--red)">Not found</td><td style="color:var(--red)">Not found</td><td style="color:var(--red)">Not found</td></tr>
+        <tr><td><strong>Marcus Rodriguez</strong></td><td>CTO</td><td style="color:var(--red)">Not found</td><td style="color:var(--red)">Not found</td><td style="color:var(--red)">Not found</td><td style="color:var(--red)">Not found</td></tr>
+        <tr><td><strong>Elena Kowalski</strong></td><td>Head of Product</td><td style="color:var(--red)">Not found</td><td style="color:var(--red)">Not found</td><td style="color:var(--red)">Not found</td><td style="color:var(--red)">Not found</td></tr>
+        <tr><td><strong>David Park</strong></td><td>Head of Ops</td><td style="color:var(--red)">Not found</td><td style="color:var(--red)">Not found</td><td style="color:var(--red)">Not found</td><td style="color:var(--red)">Not found</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Hiring Signals</h3>
+  <p>6 open positions detected — Senior Full-Stack Engineer ($150-200K), Product Designer ($120-160K), Growth Marketing Manager (Miami), Customer Success Lead (Medellin, $60-80K), Mobile Engineer React Native ($130-180K), Content Writer Spanish (Contract, $40-60K). Suggests an active but very small team (est. 3-8 people).</p>
+  <p><strong>No Glassdoor page, no engineering blog, no open source, no conference appearances.</strong> GitHub org has 1 dormant repository.</p>
+</section>
+
+<!-- ==================== WEDGE ==================== -->
+<section id="wedge" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 12</div>
+    <h2>The Wedge & Strategic Assessment <span class="conf conf-med">MEDIUM CONFIDENCE</span></h2>
+  </div>
+
+  <p>The strategic wedge is real: cross-border housing seekers locked out of local platforms by language, trust, and access barriers. Conservative addressable spend: <strong>$2-4T annually</strong>; realistic platform-intermediated SAM: <strong>$100-200B</strong>.</p>
+
+  <h3>Recommended Corridors (Go Deep, Not Wide)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Corridor</th><th>Flow Direction</th><th>Annual Flow</th><th>Demand Driver</th></tr></thead>
+      <tbody>
+        <tr><td><strong>US/Canada → LatAm</strong></td><td>Southbound</td><td class="mono">2.1M nomads</td><td>Cost arbitrage, lifestyle</td></tr>
+        <tr><td><strong>EU → Southern EU</strong></td><td>Intra-EU</td><td class="mono">1.5M relocators</td><td>Lifestyle, retirement</td></tr>
+        <tr><td><strong>Global → SE Asia</strong></td><td>Inbound</td><td class="mono">3.2M expats</td><td>Cost, culture, nomad hubs</td></tr>
+        <tr><td><strong>MENA → EU/UK</strong></td><td>Northbound</td><td class="mono">800K migrants</td><td>Education, investment</td></tr>
+        <tr><td><strong>East Asia → ANZ</strong></td><td>Trans-Pacific</td><td class="mono">1.1M students</td><td>Education, immigration</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Bull Case vs. Bear Case</h3>
+  <div class="info-grid">
+    <div class="info-card" style="border-left: 3px solid var(--green)">
+      <div class="card-tag bull">BULL CASE</div>
+      <h4>"The Booking.com Moment for Housing"</h4>
+      <p>Remote work creates permanent demand. AI + verification eliminates trust barriers. First mover in nomad corridors builds unassailable density. Fintech creates 40%+ margins. Outcome: $500M-2B revenue, $5-15B valuation in 7-10 years.</p>
+    </div>
+    <div class="info-card" style="border-left: 3px solid var(--red)">
+      <div class="card-tag bear">BEAR CASE</div>
+      <h4>"Real Estate Is Fundamentally Local"</h4>
+      <p>Housing decisions require local knowledge that can't be digitized. Regulation makes global ops prohibitive. Incumbents add cross-border features faster. Result: narrows to 3-5 cities, acqui-hired or shut down within 5 years.</p>
+    </div>
+  </div>
+
+  <h3>Historical Pattern</h3>
+  <p><strong>Every attempt at a global real estate marketplace has either narrowed, pivoted, or failed. Zero exceptions.</strong> Spotahome (85% from 8 cities), Nestpick (shut down, acquired), HousingAnywhere (pivoted B2B), Roost (shut down), Uniplaces (stagnant). The default outcome without extraordinary execution is failure.</p>
+
+  <h3>Trust vs. Translation</h3>
+  <p>Criby leads with translation (70+ languages). This is a <strong>mistake</strong>. Translation is commoditizing — Google Translate and DeepL are free and improving fast. Within 2-3 years, language barriers in online content will be functionally eliminated. <strong>Trust is the durable moat</strong>: verified landlords, property inspection, escrow, refund guarantees, review portability. Each verified transaction builds reputation data that compounds over time.</p>
+</section>
+
+<!-- ==================== RISKS ==================== -->
+<section id="risks" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 13</div>
+    <h2>Key Risks & Open Questions</h2>
+  </div>
+
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 20px 0;">
+    <div class="risk-row" style="background: var(--bg-surface);">
+      <div class="rank" style="color:var(--text-dim)">#</div>
+      <div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); font-weight:600">Risk</div>
+      <div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); font-weight:600; text-align:center">Severity</div>
+      <div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); font-weight:600; text-align:center">Likelihood</div>
+      <div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); font-weight:600">Impact</div>
+    </div>
+    <div class="risk-row">
+      <div class="rank">1</div>
+      <div class="risk-name">Credibility Gap</div>
+      <div class="severity sev-critical">Critical</div>
+      <div class="likelihood sev-critical">Confirmed</div>
+      <div style="font-size:0.78rem; color:var(--red)">Fatal in diligence</div>
+    </div>
+    <div class="risk-row">
+      <div class="rank">2</div>
+      <div class="risk-name">Liquidity Death Spiral</div>
+      <div class="severity sev-critical">Critical</div>
+      <div class="likelihood sev-high">High</div>
+      <div style="font-size:0.78rem; color:var(--red)">No GMV, users churn</div>
+    </div>
+    <div class="risk-row">
+      <div class="rank">3</div>
+      <div class="risk-name">Unverifiable Team</div>
+      <div class="severity sev-critical">Critical</div>
+      <div class="likelihood sev-critical">Confirmed</div>
+      <div style="font-size:0.78rem; color:var(--red)">Uninvestable</div>
+    </div>
+    <div class="risk-row">
+      <div class="rank">4</div>
+      <div class="risk-name">Zero Growth Infrastructure</div>
+      <div class="severity sev-high">High</div>
+      <div class="likelihood sev-critical">Confirmed</div>
+      <div style="font-size:0.78rem; color:var(--amber)">No acquisition path</div>
+    </div>
+    <div class="risk-row">
+      <div class="rank">5</div>
+      <div class="risk-name">Regulatory Complexity</div>
+      <div class="severity sev-high">High</div>
+      <div class="likelihood sev-high">High</div>
+      <div style="font-size:0.78rem; color:var(--amber)">$5-10M/yr compliance</div>
+    </div>
+    <div class="risk-row">
+      <div class="rank">6</div>
+      <div class="risk-name">Incumbent Response</div>
+      <div class="severity sev-high">High</div>
+      <div class="likelihood sev-med">Medium</div>
+      <div style="font-size:0.78rem; color:var(--amber)">18-24mo window</div>
+    </div>
+    <div class="risk-row">
+      <div class="rank">7</div>
+      <div class="risk-name">Fraud Exposure</div>
+      <div class="severity sev-high">High</div>
+      <div class="likelihood sev-high">High</div>
+      <div style="font-size:0.78rem; color:var(--amber)">Reputational risk</div>
+    </div>
+  </div>
+
+  <h3>Open Questions</h3>
+  <ul>
+    <li>Are the listed team members real people?</li>
+    <li>Where did 50K listings come from with no detectable funding or partnerships?</li>
+    <li>Is the Sequoia funding real (stealth) or fabricated?</li>
+    <li>What is actual revenue and transaction volume?</li>
+    <li>Why is all traffic from Colombia if this is a "100+ country" platform?</li>
+    <li>What is the corporate structure and legal entity?</li>
+  </ul>
+</section>
+
+<!-- ==================== VERDICT ==================== -->
+<section id="verdict" class="fade-in">
+  <div class="section-header">
+    <div class="section-num">Section 14</div>
+    <h2>Final Verdict</h2>
+  </div>
+
+  <h3>Score Card</h3>
+  <div style="max-width: 600px; margin: 24px 0;">
+    <div class="score-row">
+      <div class="score-label">Market Opportunity</div>
+      <div class="score-bar"><div class="fill" style="width:100%; background: var(--green);"></div></div>
+      <div class="score-val" style="color:var(--green)">5/5</div>
+    </div>
+    <div class="score-row">
+      <div class="score-label">Timing</div>
+      <div class="score-bar"><div class="fill" style="width:80%; background: var(--green);"></div></div>
+      <div class="score-val" style="color:var(--green)">4/5</div>
+    </div>
+    <div class="score-row">
+      <div class="score-label">Business Model</div>
+      <div class="score-bar"><div class="fill" style="width:60%; background: var(--amber);"></div></div>
+      <div class="score-val" style="color:var(--amber)">3/5</div>
+    </div>
+    <div class="score-row">
+      <div class="score-label">Product</div>
+      <div class="score-bar"><div class="fill" style="width:40%; background: var(--amber);"></div></div>
+      <div class="score-val" style="color:var(--amber)">2/5</div>
+    </div>
+    <div class="score-row">
+      <div class="score-label">Traction</div>
+      <div class="score-bar"><div class="fill" style="width:20%; background: var(--red);"></div></div>
+      <div class="score-val" style="color:var(--red)">1/5</div>
+    </div>
+    <div class="score-row">
+      <div class="score-label">Team</div>
+      <div class="score-bar"><div class="fill" style="width:20%; background: var(--red);"></div></div>
+      <div class="score-val" style="color:var(--red)">1/5</div>
+    </div>
+    <div class="score-row">
+      <div class="score-label">Competitive Position</div>
+      <div class="score-bar"><div class="fill" style="width:20%; background: var(--red);"></div></div>
+      <div class="score-val" style="color:var(--red)">1/5</div>
+    </div>
+    <div class="score-row">
+      <div class="score-label">Credibility</div>
+      <div class="score-bar"><div class="fill" style="width:20%; background: var(--red);"></div></div>
+      <div class="score-val" style="color:var(--red)">1/5</div>
+    </div>
+  </div>
+
+  <div class="verdict-box">
+    <div class="verdict-score">2.25 / 5</div>
+    <div class="verdict-label">Overall Assessment</div>
+    <div class="verdict-text">Criby identifies a real and growing market gap but presents a pattern of unverifiable claims that make it impossible to assess as a credible business. <strong>The opportunity exists — but this entity has not demonstrated any capacity to capture it.</strong></div>
+  </div>
+
+  <div class="glow-line"></div>
+
+  <div style="text-align: center; padding: 20px 0;">
+    <p style="max-width:600px; margin: 0 auto; font-size: 0.85rem; color: var(--text-muted);">Report compiled from 10 parallel research agents analyzing market data, competitive intelligence, product teardowns, regulatory frameworks, financial records, and team verification. 100+ primary sources. All company-supplied metrics should be treated as unverified.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>Criby Deep Intelligence Report &mdash; Prepared May 25, 2026 &mdash; Multi-Agent Research System</p>
+</footer>
+
+<script>
+// Progress bar
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+});
+
+// Active nav
+const sections = document.querySelectorAll('section, .hero');
+const navLinks = document.querySelectorAll('nav a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const id = e.target.id;
+      const link = document.querySelector(`nav a[href="#${id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '-60px 0px -60% 0px' });
+sections.forEach(s => observer.observe(s));
+
+// Fade in
+const fadeEls = document.querySelectorAll('.fade-in');
+const fadeObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); fadeObs.unobserve(e.target); } });
+}, { threshold: 0.08 });
+fadeEls.forEach(el => fadeObs.observe(el));
+
+// Animate score bars on scroll
+const scoreBars = document.querySelectorAll('.score-bar .fill');
+const barObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const w = e.target.style.width;
+      e.target.style.width = '0%';
+      requestAnimationFrame(() => { requestAnimationFrame(() => { e.target.style.width = w; }); });
+      barObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+scoreBars.forEach(b => barObs.observe(b));
+
+// Animate stat values
+const statCards = document.querySelectorAll('.stat-card');
+const statObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '0';
+      e.target.style.transform = 'translateY(12px)';
+      setTimeout(() => {
+        e.target.style.transition = 'all 0.4s ease';
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }, Math.random() * 200);
+      statObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.2 });
+statCards.forEach(c => statObs.observe(c));
+</script>
+
+</body>
+</html>

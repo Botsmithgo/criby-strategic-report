@@ -1288,23 +1288,44 @@ const sectionNames = {
 };
 let currentSection = null;
 
-function showOverview() {
+function showOverview(pushHistory) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('overviewView').classList.add('active');
   document.body.classList.remove('detail-view');
   currentSection = null;
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (pushHistory !== false) history.pushState({ section: null }, '', '#');
   updateNav();
 }
 
-function showDetail(id) {
+function showDetail(id, pushHistory) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('detail-' + id).classList.add('active');
   document.body.classList.add('detail-view');
   currentSection = id;
   window.scrollTo({ top: 0, behavior: 'instant' });
+  if (pushHistory !== false) history.pushState({ section: id }, '', '#' + id);
   updateNav();
 }
+
+// Browser back/forward button support
+window.addEventListener('popstate', function(e) {
+  if (e.state && e.state.section) {
+    showDetail(e.state.section, false);
+  } else {
+    showOverview(false);
+  }
+});
+
+// Handle direct link with hash on page load
+(function() {
+  const hash = location.hash.replace('#', '');
+  if (hash && sections.includes(hash)) {
+    showDetail(hash, false);
+  } else {
+    history.replaceState({ section: null }, '', location.pathname);
+  }
+})();
 
 function updateNav() {
   // Progress bar

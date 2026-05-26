@@ -50,32 +50,55 @@ body {
 /* ── Top Nav ── */
 .topnav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
-  padding: 0 32px;
+  padding: 0 24px;
   height: 56px;
   display: flex; align-items: center; justify-content: space-between;
   transition: var(--transition);
 }
 .topnav.scrolled { box-shadow: var(--shadow-sm); }
+.topnav-left {
+  display: flex; align-items: center; gap: 12px;
+}
+.topnav-home {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  border: 1px solid var(--border);
+  background: white;
+  cursor: pointer; transition: var(--transition);
+  color: var(--primary);
+}
+.topnav-home:hover {
+  background: var(--primary); color: white;
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(15,118,110,0.25);
+}
+.topnav-home svg { width: 18px; height: 18px; }
 .topnav-brand {
   font-weight: 700; font-size: 15px; color: var(--primary);
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 6px;
   letter-spacing: -0.3px;
 }
-.topnav-brand svg { width: 20px; height: 20px; }
-.topnav-back {
-  display: none; align-items: center; gap: 6px;
-  font-size: 14px; font-weight: 500; color: var(--fg-light);
-  cursor: pointer; border: none; background: none;
-  padding: 6px 12px; border-radius: 8px;
-  transition: var(--transition);
+.topnav-current {
+  display: none; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--fg-light); font-weight: 500;
 }
-.topnav-back:hover { background: rgba(15,118,110,0.06); color: var(--primary); }
-.topnav-back svg { width: 16px; height: 16px; }
-body.detail-view .topnav-back { display: flex; }
+.topnav-current .sep { color: var(--border); }
+.topnav-current .name { color: var(--fg); font-weight: 600; }
+body.detail-view .topnav-current { display: flex; }
+.topnav-right {
+  display: flex; align-items: center; gap: 8px;
+}
+.topnav-section-label {
+  display: none;
+  font-size: 12px; font-weight: 600; color: var(--primary);
+  background: rgba(15,118,110,0.08);
+  padding: 4px 12px; border-radius: 100px;
+}
+body.detail-view .topnav-section-label { display: block; }
 
 /* ── Progress Bar ── */
 .progress-bar {
@@ -86,6 +109,54 @@ body.detail-view .topnav-back { display: flex; }
   height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light));
   width: 0%; transition: width 0.4s ease;
   border-radius: 0 3px 3px 0;
+}
+
+/* ── Floating Bottom Nav ── */
+.bottom-nav {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 100;
+  background: rgba(15, 43, 41, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 100px;
+  padding: 6px;
+  display: none;
+  align-items: center; gap: 4px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.08);
+}
+body.detail-view .bottom-nav { display: flex; }
+.bottom-nav-item {
+  padding: 8px 14px;
+  border-radius: 100px;
+  font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer; border: none; background: none;
+  transition: var(--transition);
+  white-space: nowrap;
+  letter-spacing: -0.2px;
+}
+.bottom-nav-item:hover {
+  color: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.08);
+}
+.bottom-nav-item.active {
+  color: white;
+  background: var(--primary);
+}
+.bottom-nav-home {
+  padding: 8px 12px;
+  border-radius: 100px;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer; border: none; background: none;
+  transition: var(--transition);
+  display: flex; align-items: center;
+}
+.bottom-nav-home:hover { color: white; background: rgba(255,255,255,0.1); }
+.bottom-nav-home svg { width: 16px; height: 16px; }
+.bottom-nav-divider {
+  width: 1px; height: 20px;
+  background: rgba(255,255,255,0.15);
+  margin: 0 2px;
 }
 
 /* ── Views ── */
@@ -292,7 +363,7 @@ body.detail-view .topnav-back { display: flex; }
 
 .detail-body {
   max-width: 800px; margin: 0 auto;
-  padding: 48px 32px 80px;
+  padding: 48px 32px 120px;
 }
 .detail-body h2 {
   font-size: 22px; font-weight: 700; color: var(--fg);
@@ -461,7 +532,17 @@ body.detail-view .topnav-back { display: flex; }
   .cards-grid { grid-template-columns: 1fr; }
   .takeaway-grid { grid-template-columns: 1fr; gap: 20px; }
   .section-nav { flex-direction: column; gap: 12px; }
-  .topnav { padding: 0 16px; }
+  .topnav { padding: 0 12px; }
+  .topnav-brand { font-size: 13px; }
+  .topnav-current .name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+  .bottom-nav {
+    left: 12px; right: 12px; transform: none;
+    border-radius: 16px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .bottom-nav::-webkit-scrollbar { display: none; }
+  .bottom-nav-item { font-size: 11px; padding: 7px 10px; }
 }
 </style>
 </head>
@@ -469,17 +550,38 @@ body.detail-view .topnav-back { display: flex; }
 
 <!-- Top Navigation -->
 <nav class="topnav" id="topnav">
-  <div class="topnav-brand">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    Criby Strategic Report
+  <div class="topnav-left">
+    <button class="topnav-home" onclick="showOverview()" title="Back to Overview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </button>
+    <div class="topnav-brand">Criby Strategic Report</div>
+    <div class="topnav-current">
+      <span class="sep">/</span>
+      <span class="name" id="topnavSectionName"></span>
+    </div>
   </div>
-  <button class="topnav-back" id="backBtn" onclick="showOverview()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-    Back to Overview
-  </button>
+  <div class="topnav-right">
+    <span class="topnav-section-label" id="topnavSectionNum"></span>
+  </div>
 </nav>
 
 <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+
+<!-- Floating Bottom Navigation -->
+<div class="bottom-nav" id="bottomNav">
+  <button class="bottom-nav-home" onclick="showOverview()" title="Home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  </button>
+  <div class="bottom-nav-divider"></div>
+  <button class="bottom-nav-item" data-section="market" onclick="showDetail('market')">Market</button>
+  <button class="bottom-nav-item" data-section="icp" onclick="showDetail('icp')">ICP</button>
+  <button class="bottom-nav-item" data-section="business" onclick="showDetail('business')">Model</button>
+  <button class="bottom-nav-item" data-section="competitive" onclick="showDetail('competitive')">Competition</button>
+  <button class="bottom-nav-item" data-section="gtm" onclick="showDetail('gtm')">GTM</button>
+  <button class="bottom-nav-item" data-section="wedge" onclick="showDetail('wedge')">Strategy</button>
+  <button class="bottom-nav-item" data-section="risks" onclick="showDetail('risks')">Risks</button>
+  <button class="bottom-nav-item" data-section="roadmap" onclick="showDetail('roadmap')">Roadmap</button>
+</div>
 
 <!-- ════════════════════════════ OVERVIEW VIEW ════════════════════════════ -->
 <div class="view active" id="overviewView">
@@ -1170,6 +1272,16 @@ body.detail-view .topnav-back { display: flex; }
 <script>
 // ── Navigation ──
 const sections = ['market','icp','business','competitive','gtm','wedge','risks','roadmap'];
+const sectionNames = {
+  market: 'Market Opportunity',
+  icp: 'Your Ideal Customer',
+  business: 'Business Model',
+  competitive: 'Competitive Landscape',
+  gtm: 'Go-to-Market Strategy',
+  wedge: 'Strategic Positioning',
+  risks: 'Key Risks',
+  roadmap: 'Roadmap'
+};
 let currentSection = null;
 
 function showOverview() {
@@ -1178,7 +1290,7 @@ function showOverview() {
   document.body.classList.remove('detail-view');
   currentSection = null;
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  updateProgress();
+  updateNav();
 }
 
 function showDetail(id) {
@@ -1187,15 +1299,34 @@ function showDetail(id) {
   document.body.classList.add('detail-view');
   currentSection = id;
   window.scrollTo({ top: 0, behavior: 'instant' });
-  updateProgress();
+  updateNav();
 }
 
-// ── Progress Bar ──
-function updateProgress() {
+function updateNav() {
+  // Progress bar
   const fill = document.getElementById('progressFill');
-  if (!currentSection) { fill.style.width = '0%'; return; }
-  const idx = sections.indexOf(currentSection);
-  fill.style.width = ((idx + 1) / sections.length * 100) + '%';
+  if (!currentSection) { fill.style.width = '0%'; } else {
+    const idx = sections.indexOf(currentSection);
+    fill.style.width = ((idx + 1) / sections.length * 100) + '%';
+  }
+
+  // Bottom nav active state
+  document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.section === currentSection);
+  });
+
+  // Scroll active bottom nav item into view
+  const activeBtn = document.querySelector('.bottom-nav-item.active');
+  if (activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
+  // Top nav breadcrumb
+  const nameEl = document.getElementById('topnavSectionName');
+  const numEl = document.getElementById('topnavSectionNum');
+  if (currentSection) {
+    nameEl.textContent = sectionNames[currentSection];
+    const idx = sections.indexOf(currentSection);
+    numEl.textContent = (idx + 1) + ' / ' + sections.length;
+  }
 }
 
 // ── Scroll-based topnav shadow ──
